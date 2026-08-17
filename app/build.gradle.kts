@@ -65,10 +65,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    // Retrofit 2.9+ has built-in coroutines support, no adapter needed
-
-    // WebSocket - OkHttp WebSocket
-    implementation("com.squareup.okhttp3:okhttp-ws:4.12.0")
+    // OkHttp 4.x includes WebSocket support built-in
 
     // JSON - Moshi
     implementation("com.squareup.moshi:moshi:1.15.1")
