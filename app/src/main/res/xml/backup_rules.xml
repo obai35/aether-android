@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <include domain="sharedpref" path="." />
+    <include domain="database" path="." />
+    <exclude domain="sharedpref" path="api_key.xml" />
+    <exclude domain="sharedpref" path="biometric_prefs.xml" />
+</full-backup-content>

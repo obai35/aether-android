@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Aether Freelancer</string>
+    <string name="app_name_short">Aether</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="jobs_title">Jobs</string>
+    <string name="assistant_title">AI Assistant</string>
+    <string name="automation_title">Auto Mission</string>
+    <string name="settings_title">Settings</string>
+
+    <!-- Job Status -->
+    <string name="status_pending">Pending</string>
+    <string name="status_searching">Searching</string>
+    <string name="status_working">Working</string>
+    <string name="status_awaiting_approval">Awaiting Approval</string>
+    <string name="status_implemented">Implemented</string>
+    <string name="status_delivered">Delivered</string>
+    <string name="status_failed">Failed</string>
+    <string name="status_needs_fixes">Needs Fixes</string>
+    <string name="status_quality_gate_failed">Quality Gate Failed</string>
+    <string name="status_requires_human">Action Required</string>
+
+    <!-- Settings -->
+    <string name="settings_backend_url">Backend URL</string>
+    <string name="settings_api_key">API Key</string>
+    <string name="settings_test_connection">Test Connection</string>
+    <string name="settings_push_notifications">Push Notifications</string>
+    <string name="settings_auto_sync">Auto Sync</string>
+    <string name="settings_sync_interval">Sync Interval</string>
+    <string name="settings_biometric_auth">Biometric Authentication</string>
+    <string name="settings_change_api_key">Change API Key</string>
+    <string name="settings_clear_data">Clear Local Data</string>
+
+    <!-- Assistant -->
+    <string name="assistant_placeholder">Ask me anything…</string>
+    <string name="assistant_welcome">I can help you with your freelance automation. Try asking about job status, starting missions, or exporting deliverables.</string>
+
+    <!-- Automation -->
+    <string name="auto_mission_query">Search Query</string>
+    <string name="auto_mission_query_hint">e.g., python web scraping</string>
+    <string name="auto_mission_platforms">Platforms</string>
+    <string name="auto_mission_skills">Your Skills (comma-separated)</string>
+    <string name="auto_mission_skills_hint">e.g., Python, Web Scraping, Automation</string>
+    <string name="auto_mission_max_proposals">Max Proposals</string>
+    <string name="auto_mission_language">Language</string>
+    <string name="auto_mission_quality">Quality Threshold</string>
+    <string name="auto_mission_auto_deliver">Auto Deliver</string>
+    <string name="auto_mission_start">Start Auto Mission</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_name">Freelancer Updates</string>
+    <string name="notification_channel_description">Notifications for job updates, quality gates, and human actions required</string>
+
+    <!-- Biometric Auth -->
+    <string name="biometric_auth_title">Aether Freelancer</string>
+    <string name="biometric_auth_subtitle">Authenticate to access your freelance dashboard</string>
+    <string name="biometric_auth_cancel">Cancel</string>
+    <string name="biometric_auth_error">Biometric authentication failed</string>
+
+    <!-- Error Messages -->
+    <string name="error_connection_failed">Connection failed. Please check your backend URL and API key.</string>
+    <string name="error_job_not_found">Job not found</string>
+    <string name="error_export_failed">Failed to export deliverable</string>
+</resources>
