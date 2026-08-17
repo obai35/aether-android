@@ -21,7 +21,6 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AetherCompanion"
         tools:targetApi="31">
@@ -40,23 +39,32 @@
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.AetherCompanion"
+            android:theme="@style/Theme.AetherCompanion.Transparent"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- Deep link for notifications -->
             <intent-filter>
                 <action android:name="com.aether.companion.NOTIFICATION_ACTION" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
-        <!-- Biometric auth activity -->
+        <!-- Biometric Auth Activity -->
         <activity
             android:name=".auth.BiometricAuthActivity"
             android:exported="false"
             android:theme="@style/Theme.AetherCompanion.Transparent" />
 
+        <!-- Firebase Init Provider -->
+        <provider
+            android:name="com.google.firebase.provider.FirebaseInitProvider"
+            android:authorities="${applicationId}.firebaseinitprovider"
+            android:exported="false"
+            android:initOrder="100" />
+
     </application>
+
 </manifest>
