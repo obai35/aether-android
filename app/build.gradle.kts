@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android") version "2.48" apply false
 }
 
 android {
@@ -64,7 +65,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:1.0.0")
+    // Retrofit 2.9+ has built-in coroutines support, no adapter needed
 
     // WebSocket - OkHttp WebSocket
     implementation("com.squareup.okhttp3:okhttp-ws:4.12.0")
@@ -88,21 +89,21 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
 
-    // DataStore (Preferences)
+    // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    // Biometric Auth
-    implementation("androidx.biometric:biometric:1.2.0-alpha05")
+    // EncryptedSharedPreferences
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
-    // FCM (Push Notifications)
-    implementation("com.google.firebase:firebase-messaging-ktx:23.4.0")
-    implementation("com.google.firebase:firebase-analytics-ktx:21.5.0")
+    // Biometric Auth
+    implementation("androidx.biometric:biometric:1.1.0")
 
-    // WorkManager (Background tasks)
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
 
-    // Coil (Image loading)
+    // Coil Image Loading
     implementation("io.coil-kt:coil-compose:2.5.0")
 
     // Testing
@@ -111,4 +112,5 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.5")
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.5")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.5")
 }
