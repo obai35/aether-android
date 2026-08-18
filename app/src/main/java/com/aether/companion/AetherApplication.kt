@@ -3,9 +3,7 @@ package com.aether.companion
 import android.app.Application
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
-import dagger.hilt.android.HiltAndroidApp
 
-@HiltAndroidApp
 class AetherApplication : Application() {
     override fun onCreate() {
         super.onCreate()
