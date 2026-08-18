@@ -21,9 +21,14 @@ import com.aether.companion.R
 import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
+import com.aether.companion.ui.screens.DashboardScreen
+import com.aether.companion.ui.screens.JobDetailScreen
+import com.aether.companion.ui.screens.JobsScreen
+import com.aether.companion.ui.screens.AutomationScreen
+import com.aether.companion.ui.screens.AssistantScreen
+import com.aether.companion.ui.screens.SettingsScreen
 import kotlinx.coroutines.launch
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
 
 class MainActivity : ComponentActivity() {
     private val viewModel: FreelancerViewModel by viewModels()
