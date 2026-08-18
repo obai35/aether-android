@@ -14,24 +14,23 @@ import kotlinx.coroutines.SupervisorJob
 import retrofit2.Response
 
 class FreelancerRepository(
-    private val apiService: AetherApiService
+    private val apiService: AetherApiService,
+    private val scope: CoroutineScope
 ) {
     private val _jobs = MutableStateFlow<List<FreelancerJob>>(emptyList())
-    val jobs = _jobs.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    val jobs = _jobs.stateIn(scope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val _automationEvents = MutableStateFlow<List<AutomationEvent>>(emptyList())
-    val automationEvents = _automationEvents.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    val automationEvents = _automationEvents.stateIn(scope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val _currentEvent = MutableStateFlow<AutomationEvent?>(null)
-    val currentEvent = _currentEvent.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+    val currentEvent = _currentEvent.stateIn(scope, SharingStarted.WhileSubscribed(), null)
 
     private val _isConnected = MutableStateFlow(false)
-    val isConnected = _isConnected.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+    val isConnected = _isConnected.stateIn(scope, SharingStarted.WhileSubscribed(), false)
 
     private val _stats = MutableStateFlow<FreelancerStats?>(null)
-    val stats = _stats.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-
-    private val viewModelScope: CoroutineScope = CoroutineScope(SupervisorJob())
+    val stats = _stats.stateIn(scope, SharingStarted.WhileSubscribed(), null)
 
     suspend fun refreshJobs(status: JobStatus? = null) {
         try {

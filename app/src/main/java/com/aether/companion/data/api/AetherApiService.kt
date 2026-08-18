@@ -1,7 +1,7 @@
 package com.aether.companion.data.api
 
-import com.aether.companion.data.model.AIAssistant.AIAssistantRequest
-import com.aether.companion.data.model.AIAssistant.AIAssistantResponse
+import com.aether.companion.data.model.AIAssistantRequest
+import com.aether.companion.data.model.AIAssistantResponse
 import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.data.model.FreelancerJob.JobStatus
 import kotlinx.coroutines.flow.Flow
