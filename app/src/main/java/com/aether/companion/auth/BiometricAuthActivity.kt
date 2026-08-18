@@ -23,27 +23,24 @@ class BiometricAuthActivity : ComponentActivity() {
     }
 
     private fun setupBiometricPrompt() {
-        val executor = ContextCompat.getMainExecutor(this)
-        biometricPrompt = BiometricPrompt(
-            this,
-            executor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    finishWithError("Biometric authentication failed: $errString")
-                }
-
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    finishWithSuccess()
-                }
-
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    // Don't finish, let user retry
-                }
+        val executor: Executor = ContextCompat.getMainExecutor(this)
+        val callback = object : BiometricPrompt.AuthenticationCallback() {
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                super.onAuthenticationError(errorCode, errString)
+                finishWithError("Biometric authentication failed: $errString")
             }
-        )
+
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                super.onAuthenticationSucceeded(result)
+                finishWithSuccess()
+            }
+
+            override fun onAuthenticationFailed() {
+                super.onAuthenticationFailed()
+                // Don't finish, let user retry
+            }
+        }
+        biometricPrompt = BiometricPrompt(this, executor, callback)
 
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Aether Freelancer")
