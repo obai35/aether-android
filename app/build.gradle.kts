@@ -29,7 +29,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+        freeCompilerArgs += listOf(
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+        )
     }
     buildFeatures {
         compose = true
@@ -86,6 +89,9 @@ dependencies {
 
     // Biometric Auth
     implementation("androidx.biometric:biometric:1.1.0")
+
+    // Material Icons
+    implementation("androidx.compose.material:material-icons-extended:1.6.5")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
