@@ -24,7 +24,8 @@ class BiometricAuthActivity : ComponentActivity() {
 
     private fun setupBiometricPrompt() {
         val executor: Executor = ContextCompat.getMainExecutor(this)
-        biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
+
+        val callback: BiometricPrompt.AuthenticationCallback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errorCode, errString)
                 finishWithError("Biometric authentication failed: $errString")
@@ -38,7 +39,13 @@ class BiometricAuthActivity : ComponentActivity() {
             override fun onAuthenticationFailed() {
                 super.onAuthenticationFailed()
             }
-        })
+        }
+
+        biometricPrompt = BiometricPrompt(
+            this,
+            executor,
+            callback
+        )
 
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Aether Freelancer")

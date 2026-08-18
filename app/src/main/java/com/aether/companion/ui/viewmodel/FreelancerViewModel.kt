@@ -4,9 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.FreelancerJob
-import com.aether.companion.data.model.AIAssistant.AIAssistantRequest
-import com.aether.companion.data.model.AIAssistant.AIMessage
-import com.aether.companion.data.model.AIAssistant.MessageRole
+import com.aether.companion.data.model.AIMessage
+import com.aether.companion.data.model.MessageRole
 import com.aether.companion.data.repository.FreelancerRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine

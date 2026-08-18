@@ -32,19 +32,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.aether.companion.R
 import com.aether.companion.data.model.AIMessage
 import com.aether.companion.data.model.MessageRole
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import androidx.compose.runtime.collectAsStateWithLifecycle
 
 @Composable
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 fun AssistantScreen(
     viewModel: FreelancerViewModel = viewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
-    val messages by viewModel.assistantMessages
+    val messages by viewModel.assistantMessages.collectAsStateWithLifecycle()
     var inputText by remember { mutableStateOf("") }
 
     Column(
