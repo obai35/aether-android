@@ -16,8 +16,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-@HiltViewModel
-class FreelancerViewModel @Inject constructor(
+class FreelancerViewModel(
     private val repository: FreelancerRepository
 ) : ViewModel() {
 
@@ -45,175 +44,77 @@ class FreelancerViewModel @Inject constructor(
     private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.value = UIState.Loading
-            repository.refreshJobs()
-            repository.refreshStats()
-            _uiState.value = UIState.Success
+            try {
+                repository.refreshJobs()
+                _uiState.value = UIState.Success
+            } catch (e: Exception) {
+                _uiState.value = UIState.Error(e.message ?: "Failed to load jobs")
+            }
         }
     }
 
     private fun observeEvents() {
         viewModelScope.launch {
-            automationEvents.collect { events ->
+            automationEvents.collectLatest { events ->
                 events.lastOrNull()?.let { event ->
                     when (event.type) {
                         AutomationEvent.EventType.HUMAN_REQUIRED -> {
                             _pendingHumanAction.value = event
-                            _uiState.value = UIState.HumanActionRequired(event)
                         }
                         AutomationEvent.EventType.JOB_COMPLETED -> {
-                            _uiState.value = UIState.JobCompleted(event.data as? AutomationEvent.EventData.JobCompletedData)
+                            repository.refreshJobs()
                         }
-                        AutomationEvent.EventType.JOB_FAILED -> {
-                            _uiState.value = UIState.Error(event.data.toString())
-                        }
-                        else -> {
-                            // Update UI state based on event
-                        }
+                        else -> {}
                     }
                 }
             }
         }
     }
 
-    fun refreshJobs() {
-        viewModelScope.launch {
-            repository.refreshJobs()
-        }
-    }
-
-    suspend fun approveProposal(jobId: String): Boolean {
-        return repository.approveProposal(jobId)
-    }
-
-    suspend fun confirmDelivery(jobId: String): DeliveryResult {
-        return repository.confirmDelivery(jobId)
-    }
-
-    suspend fun exportPackage(jobId: String, arabic: Boolean = false): ExportResult {
-        return repository.exportPackage(jobId, arabic)
-    }
-
-    suspend fun sendAssistantMessage(message: String) {
+    fun sendAssistantMessage(message: String) {
         val userMessage = AIMessage(
             id = UUID.randomUUID().toString(),
             role = MessageRole.USER,
             content = message,
-            timestamp = System.currentTimeMillis(),
-            toolCalls = null,
-            toolCallId = null,
-            metadata = null
+            timestamp = System.currentTimeMillis()
         )
         _assistantMessages.value = _assistantMessages.value + userMessage
 
-        val request = AIAssistantRequest(
-            messages = _assistantMessages.value,
-            tools = getAvailableTools(),
-            context = null
-        )
-
         viewModelScope.launch {
-            val response = repository.chatWithAssistant(request)
-            response?.message?.let { assistantMessage ->
-                _assistantMessages.value = _assistantMessages.value + assistantMessage
-                // Execute any actions
-                response.actions?.forEach { action ->
-                    executeAssistantAction(action)
-                }
-            }
-        }
-    }
-
-    private fun getAvailableTools(): List<ToolDefinition> {
-        return listOf(
-            ToolDefinition(
-                type = "function",
-                function = FunctionSchema(
-                    name = "get_job_status",
-                    description = "Get current status of a freelancer job",
-                    parameters = mapOf(
-                        "type" to "object",
-                        "properties" to mapOf(
-                            "job_id" to mapOf("type" to "string", "description" to "Job ID")
-                        ),
-                        "required" to listOf("job_id")
-                    )
-                )
-            ),
-            ToolDefinition(
-                type = "function",
-                function = FunctionSchema(
-                    name = "trigger_auto_mission",
-                    description = "Start a new automated freelancer mission",
-                    parameters = mapOf(
-                        "type" to "object",
-                        "properties" to mapOf(
-                            "query" to mapOf("type" to "string"),
-                            "platforms" to mapOf("type" to "array", "items" to mapOf("type" to "string")),
-                            "skills" to mapOf("type" to "array", "items" to mapOf("type" to "string")),
-                            "max_proposals" to mapOf("type" to "integer"),
-                            "language" to mapOf("type" to "string"),
-                            "auto_deliver" to mapOf("type" to "boolean")
-                        ),
-                        "required" to listOf("query")
-                    )
-                )
-            ),
-            ToolDefinition(
-                type = "function",
-                function = FunctionSchema(
-                    name = "export_deliverable",
-                    description = "Export a completed job as a deliverable package",
-                    parameters = mapOf(
-                        "type" to "object",
-                        "properties" to mapOf(
-                            "job_id" to mapOf("type" to "string"),
-                            "arabic" to mapOf("type" to "boolean")
-                        ),
-                        "required" to listOf("job_id")
-                    )
-                )
+            // TODO: Call API
+            val responseMessage = AIMessage(
+                id = UUID.randomUUID().toString(),
+                role = MessageRole.ASSISTANT,
+                content = "Received: $message (API integration pending)",
+                timestamp = System.currentTimeMillis()
             )
-        )
-    }
-
-    private fun executeAssistantAction(action: AssistantAction) {
-        when (action.type) {
-            AssistantAction.ActionType.SHOW_JOB -> {
-                action.payload["job_id"]?.let { jobId ->
-                    // Navigate to job detail
-                }
-            }
-            AssistantAction.ActionType.APPROVE_PROPOSAL -> {
-                action.payload["job_id"]?.let { jobId ->
-                    viewModelScope.launch { approveProposal(jobId) }
-                }
-            }
-            AssistantAction.ActionType.TRIGGER_AUTOMATION -> {
-                // Parse and trigger auto mission
-            }
-            AssistantAction.ActionType.NAVIGATE -> {
-                // Handle navigation
-            }
-            else -> {}
+            _assistantMessages.value = _assistantMessages.value + responseMessage
         }
     }
 
-    fun clearPendingHumanAction() {
-        _pendingHumanAction.value = null
-        _uiState.value = UIState.Success
+    fun approveProposal(jobId: String) {
+        viewModelScope.launch {
+            try {
+                repository.approveProposal(jobId)
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
     }
 
-    override fun onCleared() {
-        repository.disconnect()
-        super.onCleared()
+    fun confirmDelivery(jobId: String) {
+        viewModelScope.launch {
+            try {
+                repository.confirmDelivery(jobId)
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
     }
-}
 
-// UI State sealed class
-sealed interface UIState {
-    data class Loading : UIState
-    data class Success : UIState
-    data class Error(val message: String) : UIState
-    data class HumanActionRequired(val event: AutomationEvent) : UIState
-    data class JobCompleted(val data: AutomationEvent.EventData.JobCompletedData?) : UIState
+    sealed interface UIState {
+        data class Loading : UIState
+        data class Success : UIState
+        data class Error(val message: String) : UIState
+    }
 }

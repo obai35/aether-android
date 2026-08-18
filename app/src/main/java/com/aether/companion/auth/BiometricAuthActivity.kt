@@ -44,24 +44,24 @@ class BiometricAuthActivity : ComponentActivity() {
             .setTitle("Aether Freelancer")
             .setSubtitle("Authenticate to access your freelance dashboard")
             .setNegativeButtonText("Cancel")
-            .setAllowedAuthenticators(BiometricPrompt.Authenticators.BIOMETRIC_STRONG or BiometricPrompt.Authenticators.DEVICE_CREDENTIAL)
+            .setAllowedAuthenticators(
+                BiometricPrompt.DEVICE_CREDENTIAL or BiometricPrompt.BIOMETRIC_STRONG
+            )
             .build()
     }
 
     private fun finishWithSuccess() {
-        val result = Intent().apply {
-            putExtra("auth_success", true)
-        }
-        setResult(RESULT_OK, result)
+        val intent = Intent()
+        intent.putExtra("auth_success", true)
+        setResult(RESULT_OK, intent)
         finish()
     }
 
-    private fun finishWithError(message: String) {
-        val result = Intent().apply {
-            putExtra("auth_success", false)
-            putExtra("error_message", message)
-        }
-        setResult(RESULT_CANCELED, result)
+    private fun finishWithError(error: String) {
+        val intent = Intent()
+        intent.putExtra("auth_success", false)
+        intent.putExtra("error", error)
+        setResult(RESULT_CANCELED, intent)
         finish()
     }
 }

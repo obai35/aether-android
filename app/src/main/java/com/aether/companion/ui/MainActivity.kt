@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,7 +28,7 @@ import com.aether.companion.ui.viewmodel.FreelancerViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    private val viewModel: FreelancerViewModel by hiltViewModel()
+    private val viewModel: FreelancerViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,38 +42,32 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController, startDestination = "dashboard") {
                         composable("dashboard") {
-                            DashboardScreen(viewModel, navController)
+                            DashboardScreen(onJobClick = { job ->
+                                navController.navigate("job_detail/$job.id")
+                            })
+                        }
+                        composable(
+                            route = "job_detail/{jobId}",
+                            arguments = listOf(navArgument("jobId") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val jobId = backStackEntry.getString()!!
+                            JobDetailScreen(jobId = jobId)
                         }
                         composable("jobs") {
-                            JobsScreen(viewModel, navController)
-                        }
-                        composable("job/{jobId}") {
-                            val jobId = it.getString()!!
-                            JobDetailScreen(viewModel, navController, jobId)
-                        }
-                        composable("assistant") {
-                            AssistantScreen(viewModel, navController)
+                            JobsScreen(onJobClick = { job ->
+                                navController.navigate("job_detail/$job.id")
+                            })
                         }
                         composable("automation") {
-                            AutomationScreen(viewModel, navController)
+                            AutomationScreen()
+                        }
+                        composable("assistant") {
+                            AssistantScreen()
                         }
                         composable("settings") {
-                            SettingsScreen(viewModel, navController)
+                            SettingsScreen()
                         }
                     }
-                }
-            }
-        }
-    }
-
-    // Navigation observer for human-required events
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch {
-            viewModel.pendingHumanAction.collect { event ->
-                event?.let {
-                    // Show bottom sheet or dialog for human action
-                    // This will be handled by the UI state
                 }
             }
         }
