@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
-    id("com.google.dagger.hilt.android") version "2.48" apply false
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -31,7 +31,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
     buildFeatures {
         compose = true
