@@ -1,21 +1,20 @@
 package com.aether.companion.data.repository
 
 import com.aether.companion.data.api.AetherApiService
-import com.aether.companion.data.api.AetherWebSocketClient
 import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.FreelancerJob
-import com.aether.companion.data.model.AIAssistant.AIAssistantRequest
-import com.aether.companion.data.model.AIAssistant.AIAssistantResponse
-import com.aether.companion.data.model.AIAssistant.AssistantAction
+import com.aether.companion.data.model.FreelancerJob.JobStatus
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import retrofit2.Response
 
 class FreelancerRepository(
-    private val apiService: AetherApiService,
-    private val webSocketClient: AetherWebSocketClient
+    private val apiService: AetherApiService
 ) {
     private val _jobs = MutableStateFlow<List<FreelancerJob>>(emptyList())
     val jobs = _jobs.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -32,125 +31,72 @@ class FreelancerRepository(
     private val _stats = MutableStateFlow<FreelancerStats?>(null)
     val stats = _stats.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    init {
-        setupWebSocket()
-    }
+    private val viewModelScope: CoroutineScope = CoroutineScope(SupervisorJob())
 
-    private fun setupWebSocket() {
-        webSocketClient.connect()
-        _isConnected.value = webSocketClient.isConnected()
-    }
-
-    suspend fun refreshJobs(status: FreelancerJob.JobStatus? = null) {
-        val response = apiService.getJobs(status = status)
-        if (response.isSuccessful) {
-            response.body()?.let { _jobs.value = it }
+    suspend fun refreshJobs(status: JobStatus? = null) {
+        try {
+            val response = apiService.getJobs(status = status)
+            if (response.isSuccessful && response.body() != null) {
+                _jobs.value = response.body()!!
+            }
+        } catch (e: Exception) {
+            // Handle error
         }
     }
 
     suspend fun getJob(jobId: String): FreelancerJob? {
-        val response = apiService.getJob(jobId)
-        return response.body()
+        try {
+            val response = apiService.getJob(jobId)
+            return if (response.isSuccessful) response.body() else null
+        } catch (e: Exception) {
+            return null
+        }
     }
 
     suspend fun approveProposal(jobId: String): Boolean {
-        val response = apiService.approveProposal(jobId)
-        return response.isSuccessful && response.body()?.success == true
-    }
-
-    suspend fun confirmDelivery(jobId: String): DeliveryResult {
-        val response = apiService.confirmDelivery(jobId)
-        if (response.isSuccessful) {
-            val body = response.body()
-            return DeliveryResult(body?.success == true, body?.message, body?.deliverableUrl)
-        }
-        return DeliveryResult(false, response.message(), null)
-    }
-
-    suspend fun exportPackage(jobId: String, arabic: Boolean = false): ExportResult {
-        val response = if (arabic) {
-            apiService.exportArabicPackage(jobId)
-        } else {
-            apiService.exportPackage(jobId)
-        }
-        if (response.isSuccessful) {
-            val body = response.body()
-            return ExportResult(
-                body?.success == true,
-                body?.packagePath,
-                body?.packageName,
-                body?.sizeBytes
-            )
-        }
-        return ExportResult(false, null, null, null)
-    }
-
-    suspend fun chatWithAssistant(request: AIAssistantRequest): AIAssistantResponse? {
-        val response = apiService.chatWithAssistant(request)
-        return response.body()
-    }
-
-    suspend fun refreshStats() {
-        val response = apiService.getStats()
-        if (response.isSuccessful) {
-            _stats.value = response.body()
+        try {
+            val response = apiService.approveProposal(jobId)
+            return response.isSuccessful
+        } catch (e: Exception) {
+            return false
         }
     }
 
-    suspend fun triggerAutoMission(request: AutoMissionRequest): AutoMissionResult {
-        val response = apiService.triggerAutoMission(request)
-        if (response.isSuccessful) {
-            val body = response.body()
-            return AutoMissionResult(body?.success == true, body?.missionId, body?.message)
-        }
-        return AutoMissionResult(false, null, response.message())
-    }
-
-    fun onEventReceived(event: AutomationEvent) {
-        _automationEvents.value = (_automationEvents.value + event).takeLast(100)
-        _currentEvent.value = event
-
-        // Update job status if event contains job info
-        when (event.type) {
-            AutomationEvent.EventType.JOB_COMPLETED,
-            AutomationEvent.EventType.JOB_FAILED,
-            AutomationEvent.EventType.QUALITY_GATE_COMPLETED -> {
-                refreshJobs()
-                refreshStats()
-            }
+    suspend fun confirmDelivery(jobId: String): Boolean {
+        try {
+            val response = apiService.confirmDelivery(jobId)
+            return response.isSuccessful
+        } catch (e: Exception) {
+            return false
         }
     }
 
-    fun disconnect() {
-        webSocketClient.disconnect()
-        _isConnected.value = false
+    suspend fun exportPackage(jobId: String): String? {
+        try {
+            val response = apiService.exportPackage(jobId)
+            return if (response.isSuccessful) response.body()?.downloadUrl else null
+        } catch (e: Exception) {
+            return null
+        }
     }
+
+    data class FreelancerStats(
+        val totalJobs: Int,
+        val completedJobs: Int,
+        val pendingJobs: Int,
+        val failedJobs: Int,
+        val totalEarnings: Double
+    )
+
+    data class ExportResponse(
+        val success: Boolean,
+        val downloadUrl: String?,
+        val expiresAt: Long?
+    )
+
+    data class AutoMissionResult(
+        val success: Boolean,
+        val missionId: String?,
+        val message: String?
+    )
 }
-
-data class DeliveryResult(
-    val success: Boolean,
-    val message: String?,
-    val deliverableUrl: String?
-)
-
-data class ExportResult(
-    val success: Boolean,
-    val packagePath: String?,
-    val packageName: String?,
-    val sizeBytes: Long?
-)
-
-data class AutoMissionResult(
-    val success: Boolean,
-    val missionId: String?,
-    val message: String?
-)
-
-// Extension to access viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-
-// Note: In real implementation, inject viewModelScope from ViewModel
-// This is a placeholder - actual implementation would use ViewModel's viewModelScope
-private val viewModelScope: CoroutineScope = CoroutineScope(SupervisorJob())

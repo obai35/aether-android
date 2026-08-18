@@ -3,6 +3,7 @@ package com.aether.companion.auth
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import com.aether.companion.R
@@ -44,9 +45,7 @@ class BiometricAuthActivity : ComponentActivity() {
             .setTitle("Aether Freelancer")
             .setSubtitle("Authenticate to access your freelance dashboard")
             .setNegativeButtonText("Cancel")
-            .setAllowedAuthenticators(
-                BiometricPrompt.DEVICE_CREDENTIAL or BiometricPrompt.BIOMETRIC_STRONG
-            )
+            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)
             .build()
     }
 
