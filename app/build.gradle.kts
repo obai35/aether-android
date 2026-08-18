@@ -88,8 +88,8 @@ dependencies {
     // Coil Image Loading
     implementation("io.coil-kt:coil-compose:2.5.0")
 
-    // Biometric Auth
-    implementation("androidx.biometric:biometric:1.1.0")
+    // Biometric Auth - Updated to 1.2.0-alpha04 for better API compatibility
+    implementation("androidx.biometric:biometric:1.2.0-alpha04")
 
     // Material Icons
     implementation("androidx.compose.material:material-icons-extended:1.6.5")
