@@ -16,6 +16,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.getString
 import com.aether.companion.R
 import com.aether.companion.data.model.AutomationEvent
