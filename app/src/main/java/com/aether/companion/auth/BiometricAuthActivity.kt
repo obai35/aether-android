@@ -3,9 +3,11 @@ package com.aether.companion.auth
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import com.aether.companion.R
 import java.util.concurrent.Executor
 
@@ -41,7 +43,8 @@ class BiometricAuthActivity : ComponentActivity() {
             }
         }
 
-        biometricPrompt = BiometricPrompt(this, executor, callback)
+        // Use the FragmentActivity constructor for BiometricPrompt
+        biometricPrompt = BiometricPrompt(this as FragmentActivity, executor, callback)
 
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Aether Freelancer")
