@@ -23,7 +23,7 @@ class BiometricAuthActivity : ComponentActivity() {
     }
 
     private fun setupBiometricPrompt() {
-        val executor = ContextCompat.getMainExecutor(this)
+        val executor: Executor = ContextCompat.getMainExecutor(this)
         biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errorCode, errString)

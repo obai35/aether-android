@@ -51,11 +51,13 @@ class AetherFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
+            this,
+            0,
+            intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val channelId = "freelancer_updates"
+        val channelId = "freelancer_channel"
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -63,33 +65,21 @@ class AetherFirebaseMessagingService : FirebaseMessagingService() {
                 channelId,
                 "Freelancer Updates",
                 NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Notifications for job updates, quality gates, and human actions required"
-            }
+            )
             notificationManager.createNotificationChannel(channel)
         }
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notification)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(title)
             .setContentText(body)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setAutoCancel(true)
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(getNotificationCategory(eventType))
             .build()
 
-        notificationManager.notify(System.currentTimeMillis().toInt(), notification)
-    }
-
-    private fun getNotificationCategory(eventType: String): String {
-        return when (eventType) {
-            "human_required" -> NotificationCompat.CATEGORY_ALARM
-            "job_completed", "job_failed" -> NotificationCompat.CATEGORY_STATUS
-            "quality_gate_completed" -> NotificationCompat.CATEGORY_STATUS
-            "new_job_found" -> NotificationCompat.CATEGORY_RECOMMENDATION
-            else -> NotificationCompat.CATEGORY_MESSAGE
-        }
+        notificationManager.notify(jobId?.hashCode() ?: 0, notification)
     }
 }
