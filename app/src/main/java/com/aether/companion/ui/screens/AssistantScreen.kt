@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aether.companion.R
-import com.aether.companion.data.model.AIAssistant.AIMessage
-import com.aether.companion.data.model.AIAssistant.MessageRole
+import com.aether.companion.data.model.AIMessage
+import com.aether.companion.data.model.MessageRole
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
