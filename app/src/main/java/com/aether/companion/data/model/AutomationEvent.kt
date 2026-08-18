@@ -1,9 +1,7 @@
 package com.aether.companion.data.model
 
 import com.squareup.moshi.Json
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class AutomationEvent(
     @Json(name = "type") val type: EventType,
     @Json(name = "data") val data: EventData,
@@ -31,60 +29,42 @@ enum class EventType(val value: String) {
     }
 }
 
-@Serializable
-sealed class EventData {
-    @Serializable
+sealed interface EventData {
     data class ProgressData(
         @Json(name = "message") val message: String,
         @Json(name = "stage") val stage: String?,
         @Json(name = "progress_percent") val progressPercent: Int?
-    ) : EventData()
+    ) : EventData
 
-    @Serializable
     data class StageData(
         @Json(name = "stage") val stage: String,
         @Json(name = "details") val details: Map<String, Any>?
-    ) : EventData()
+    ) : EventData
 
-    @Serializable
     data class QualityGateData(
         @Json(name = "passed") val passed: Boolean,
         @Json(name = "checks") val checks: Map<String, QualityCheck>,
         @Json(name = "blocking_issues") val blockingIssues: List<String>
-    ) : EventData()
+    ) : EventData
 
-    @Serializable
     data class HumanRequiredData(
         @Json(name = "reason") val reason: String,
-        @Json(name = "action_required") val actionRequired: HumanAction,
-        @Json(name = "context") val context: Map<String, Any>?
-    ) : EventData()
+        @Json(name = "details") val details: Map<String, Any>?
+    ) : EventData
 
-    @Serializable
     data class JobCompletedData(
-        @Json(name = "job") val job: FreelancerJob,
-        @Json(name = "deliverable_path") val deliverablePath: String?
-    ) : EventData()
+        @Json(name = "deliverable_url") val deliverableUrl: String?,
+        @Json(name = "summary") val summary: String
+    ) : EventData
 
-    @Serializable
-    data class NewJobData(
-        @Json(name = "job") val job: FreelancerJob,
-        @Json(name = "match_score") val matchScore: Double
-    ) : EventData()
-
-    @Serializable
     data class LogData(
         @Json(name = "level") val level: String,
-        @Json(name = "message") val message,
-        @Json(name = "source") val source: String
-    ) : EventData()
+        @Json(name = "message") val message: String
+    ) : EventData
 }
 
-enum class HumanAction(val value: String) {
-    APPROVE_PROPOSAL("approve_proposal"),
-    REVIEW_CODE("review_code"),
-    PROVIDE_CREDENTIALS("provide_credentials"),
-    CONFIRM_DELIVERY("confirm_delivery"),
-    RESOLVE_ERROR("resolve_error"),
-    CUSTOM("custom");
-}
+data class QualityCheck(
+    @Json(name = "name") val name: String,
+    @Json(name = "passed") val passed: Boolean,
+    @Json(name = "details") val details: String?
+)

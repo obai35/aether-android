@@ -1,9 +1,7 @@
 package com.aether.companion.data.model
 
 import com.squareup.moshi.Json
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class FreelancerJob(
     @Json(name = "id") val id: String,
     @Json(name = "offer_id") val offerId: String,
@@ -44,40 +42,46 @@ data class FreelancerJob(
     }
 }
 
-@Serializable
 data class TestResult(
     @Json(name = "passed") val passed: Boolean,
-    @Json(name = "output") val output: String?,
-    @Json(name = "errors") val errors: List<String>?
-)
+    @Json(name = "output") val output: String,
+    @Json(name = "tests") val tests: List<TestCase>?
+) {
+    data class TestCase(
+        @Json(name = "name") val name: String,
+        @Json(name = "passed") val passed: Boolean,
+        @Json(name = "duration") val duration: Long,
+        @Json(name = "error") val error: String?
+    )
+}
 
-@Serializable
 data class CodeReview(
-    @Json(name = "score") val score: Int,
-    @Json(name = "feedback") val feedback: String,
-    @Json(name = "issues") val issues: List<ReviewIssue>
-)
+    @Json(name = "passed") val passed: Boolean,
+    @Json(name = "score") val score: Double,
+    @Json(name = "issues") val issues: List<ReviewIssue>,
+    @Json(name = "summary") val summary: String
+) {
+    data class ReviewIssue(
+        @Json(name = "file") val file: String,
+        @Json(name = "line") val line: Int,
+        @Json(name = "severity") val severity: String,
+        @Json(name = "message") val message: String,
+        @Json(name = "suggestion") val suggestion: String?
+    )
+}
 
-@Serializable
-data class ReviewIssue(
-    @Json(name = "severity") val severity: String,
-    @Json(name = "message") val message: String,
-    @Json(name = "file") val file: String?,
-    @Json(name = "line") val line: Int?
-)
-
-@Serializable
 data class QualityGate(
     @Json(name = "passed") val passed: Boolean,
-    @Json(name = "threshold") val threshold: String,
-    @Json(name = "checks") val checks: Map<String, QualityCheck>,
-    @Json(name = "blocking_issues") val blockingIssues: List<String>
-)
-
-@Serializable
-data class QualityCheck(
-    @Json(name = "returncode") val returnCode: Int?,
-    @Json(name = "output") val output: String?,
-    @Json(name = "error") val error: String?,
-    @Json(name = "passed") val passed: Boolean?
-)
+    @Json(name = "lint_passed") val lintPassed: Boolean,
+    @Json(name = "security_passed") val securityPassed: Boolean,
+    @Json(name = "tests_passed") val testsPassed: Boolean,
+    @Json(name = "issues") val issues: List<QualityIssue>
+) {
+    data class QualityIssue(
+        @Json(name = "type") val type: String,
+        @Json(name = "severity") val severity: String,
+        @Json(name = "message") val message: String,
+        @Json(name = "file") val file: String?,
+        @Json(name = "line") val line: Int?
+    )
+}
