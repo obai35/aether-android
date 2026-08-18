@@ -45,9 +45,11 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController, startDestination = "dashboard") {
                         composable("dashboard") {
-                            DashboardScreen(onJobClick = { job ->
-                                navController.navigate("job_detail/${job.id}")
-                            })
+                            DashboardScreen(
+                                onNavigateToJobs = { navController.navigate("jobs") },
+                                onNavigateToAssistant = { navController.navigate("assistant") },
+                                onNavigateToAutomation = { navController.navigate("automation") }
+                            )
                         }
                         composable(
                             route = "job_detail/{jobId}",
@@ -57,9 +59,11 @@ class MainActivity : ComponentActivity() {
                             JobDetailScreen(jobId = jobId)
                         }
                         composable("jobs") {
-                            JobsScreen(onJobClick = { job ->
-                                navController.navigate("job_detail/${job.id}")
-                            })
+                            JobsScreen(
+                                onNavigateToJob = { jobId ->
+                                    navController.navigate("job_detail/$jobId")
+                                }
+                            )
                         }
                         composable("automation") {
                             AutomationScreen()
