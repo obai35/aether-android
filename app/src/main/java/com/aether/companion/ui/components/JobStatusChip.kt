@@ -18,11 +18,11 @@ fun JobStatusChip(status: FreelancerJob.JobStatus) {
         FreelancerJob.JobStatus.PENDING -> "Pending" to MaterialTheme.colorScheme.secondary
         FreelancerJob.JobStatus.SEARCHING -> "Searching" to MaterialTheme.colorScheme.primary
         FreelancerJob.JobStatus.WORKING -> "Working" to MaterialTheme.colorScheme.tertiary
-        FreelancerJob.JobStatus.AWAITING_APPROVAL -> "Awaiting Approval" to MaterialTheme.colorScheme.warning
+        FreelancerJob.JobStatus.AWAITING_APPROVAL -> "Awaiting Approval" to MaterialTheme.colorScheme.secondary
         FreelancerJob.JobStatus.IMPLEMENTED -> "Implemented" to MaterialTheme.colorScheme.primary
         FreelancerJob.JobStatus.DELIVERED -> "Delivered" to MaterialTheme.colorScheme.tertiary
         FreelancerJob.JobStatus.FAILED -> "Failed" to MaterialTheme.colorScheme.error
-        FreelancerJob.JobStatus.NEEDS_FIXES -> "Needs Fixes" to MaterialTheme.colorScheme.warning
+        FreelancerJob.JobStatus.NEEDS_FIXES -> "Needs Fixes" to MaterialTheme.colorScheme.secondary
         FreelancerJob.JobStatus.QUALITY_GATE_FAILED -> "Quality Gate Failed" to MaterialTheme.colorScheme.error
         FreelancerJob.JobStatus.REQUIRES_HUMAN -> "Requires Human" to MaterialTheme.colorScheme.error
         else -> status.name to MaterialTheme.colorScheme.onSurfaceVariant
