@@ -234,7 +234,7 @@ fun JobSummaryCard(job: FreelancerJob) {
             Spacer(modifier = Modifier.padding(top = 8.dp))
             Text(job.platform, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.padding(top = 8.dp))
-            Text("\$${String.format("%.0f", job.budget))", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text("\$${String.format("%.0f", job.budget)}", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
         }
     }
 }
