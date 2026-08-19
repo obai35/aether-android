@@ -51,8 +51,8 @@ dependencies {
     // Core Android
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    // lifecycle-runtime-compose provides collectAsStateWithLifecycle
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.0")
+    // lifecycle-runtime-compose provides collectAsStateWithLifecycle (use stable version)
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.compose.ui:ui:1.6.5")
     implementation("androidx.compose.ui:ui-graphics:1.6.5")
@@ -63,8 +63,8 @@ dependencies {
     // Material Components (for themes)
     implementation("com.google.android.material:material:1.12.0")
 
-    // Navigation - Updated to 2.8.0 for navArgument, getString, NavType
-    implementation("androidx.navigation:navigation-compose:2.8.0")
+    // Navigation - Use 2.7.7 (latest stable)
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
     // Networking - Retrofit + OkHttp
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
