@@ -28,52 +28,68 @@ import com.aether.companion.ui.screens.JobsScreen
 import com.aether.companion.ui.screens.AutomationScreen
 import com.aether.companion.ui.screens.AssistantScreen
 import com.aether.companion.ui.screens.SettingsScreen
-import kotlinx.coroutines.launch
-import androidx.core.view.WindowCompat
 
 class MainActivity : ComponentActivity() {
     private val viewModel: FreelancerViewModel by viewModels()
+    private var isConnected = false
+    private var shouldAutoConnect = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
         setContent {
             MaterialTheme {
                 Surface(
-                    modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
-                    NavHost(navController, startDestination = "dashboard") {
+                    var pendingJobId by remember { mutableStateOf<String?>(null) }
+                    var showJobDetail by remember { mutableStateOf(false) }
+                    var pendingAction by remember { mutableStateOf<AutomationEvent?>(null) }
+
+                    NavHost(rememberNavController(), startDestination = "dashboard") {
                         composable("dashboard") {
                             DashboardScreen(
+                                viewModel = viewModel,
                                 onNavigateToJobs = { navController.navigate("jobs") },
                                 onNavigateToAssistant = { navController.navigate("assistant") },
                                 onNavigateToAutomation = { navController.navigate("automation") }
+                            )
+                        }
+                        composable("jobs") {
+                            JobsScreen(
+                                viewModel = viewModel,
+                                onNavigateToJob = { jobId -> navController.navigate("job_detail/$jobId") }
                             )
                         }
                         composable(
                             route = "job_detail/{jobId}",
                             arguments = listOf(navArgument("jobId") { type = NavType.StringType })
                         ) { backStackEntry ->
-                            val jobId = backStackEntry.getString()!!
-                            JobDetailScreen(jobId = jobId)
-                        }
-                        composable("jobs") {
-                            JobsScreen(
-                                onNavigateToJob = { jobId ->
-                                    navController.navigate("job_detail/$jobId")
-                                }
+                            val jobId = backStackEntry.getString() ?: ""
+                            JobDetailScreen(
+                                viewModel = viewModel,
+                                jobId = jobId,
+                                onNavigateBack = { navController.popBackStack() }
                             )
                         }
                         composable("automation") {
-                            AutomationScreen()
+                            AutomationScreen(
+                                viewModel = viewModel,
+                                onNavigateBack = { navController.popBackStack() }
+                            )
                         }
                         composable("assistant") {
-                            AssistantScreen()
+                            AssistantScreen(
+                                viewModel = viewModel,
+                                onNavigateBack = { navController.popBackStack() }
+                            )
                         }
                         composable("settings") {
-                            SettingsScreen()
+                            SettingsScreen(
+                                viewModel = viewModel,
+                                onNavigateBack = { navController.popBackStack() }
+                            )
                         }
                     }
                 }
