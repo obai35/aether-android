@@ -46,8 +46,8 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Clean and Build Debug APK
-        run: ./gradlew clean assembleDebug --no-daemon --stacktrace
+      - name: Clean and Build Debug APK (with fresh dependencies)
+        run: ./gradlew clean assembleDebug --no-daemon --stacktrace --refresh-dependencies
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
