@@ -39,11 +39,11 @@ import com.aether.companion.data.model.AIMessage
 import com.aether.companion.data.model.MessageRole
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.annotation.OptIn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.annotation.OptIn
 
-@Composable
 @OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun AssistantScreen(
     viewModel: FreelancerViewModel = viewModel(),
     onNavigateBack: () -> Unit = {}

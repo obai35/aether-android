@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
                         composable(
                             route = "job_detail/{jobId}",
                         ) { backStackEntry ->
-                            val jobId = backStackEntry.getString("jobId") ?: ""
+                            val jobId = backStackEntry.arguments?.getString("jobId") ?: ""
                             JobDetailScreen(
                                 viewModel = viewModel,
                                 jobId = jobId,

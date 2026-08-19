@@ -7,10 +7,17 @@ data class AIMessage(
     @Json(name = "role") val role: MessageRole,
     @Json(name = "content") val content: String,
     @Json(name = "timestamp") val timestamp: Long,
-    @Json(name = "tool_calls") val toolCalls: List<ToolCall>?,
-    @Json(name = "tool_call_id") val toolCallId: String?,
-    @Json(name = "metadata") val metadata: Map<String, Any>?
-)
+    @Json(name = "tool_calls") val toolCalls: List<ToolCall>? = null,
+    @Json(name = "tool_call_id") val toolCallId: String? = null,
+    @Json(name = "metadata") val metadata: Map<String, Any>? = null
+) {
+    constructor(
+        id: String,
+        role: MessageRole,
+        content: String,
+        timestamp: Long
+    ) : this(id, role, content, timestamp, null, null, null)
+}
 
 enum class MessageRole(val value: String) {
     USER("user"),
@@ -32,8 +39,8 @@ data class FunctionCall(
 
 data class AIAssistantRequest(
     @Json(name = "messages") val messages: List<AIMessage>,
-    @Json(name = "tools") val tools: List<ToolDefinition>?,
-    @Json(name = "context") val context: AssistantContext?
+    @Json(name = "tools") val tools: List<ToolDefinition>? = null,
+    @Json(name = "context") val context: AssistantContext? = null
 )
 
 data class ToolDefinition(
@@ -48,14 +55,14 @@ data class FunctionSchema(
 )
 
 data class AssistantContext(
-    @Json(name = "current_job_id") val currentJobId: String?,
-    @Json(name = "automation_state") val automationState: String?,
-    @Json(name = "user_preferences") val userPreferences: Map<String, Any>?
+    @Json(name = "current_job_id") val currentJobId: String? = null,
+    @Json(name = "automation_state") val automationState: String? = null,
+    @Json(name = "user_preferences") val userPreferences: Map<String, Any>? = null
 )
 
 data class AIAssistantResponse(
     @Json(name = "message") val message: AIMessage,
-    @Json(name = "usage") val usage: Usage?
+    @Json(name = "usage") val usage: Usage? = null
 ) {
     data class Usage(
         @Json(name = "prompt_tokens") val promptTokens: Int,
