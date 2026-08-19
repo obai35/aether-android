@@ -58,6 +58,38 @@ fun JobDetailScreen(
 
     val TabTitles = listOf("Overview", "Progress", "Quality", "Events")
 
+    if (job == null) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Job Details") },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    )
+                )
+            },
+            content = { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    CircularProgressIndicator()
+                    Text("Loading job...")
+                }
+            }
+        )
+        return
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -108,7 +140,7 @@ fun JobDetailScreen(
                             JobStatusChip(status = job.status)
                         }
                         Spacer(modifier = Modifier.padding(top = 16.dp))
-                        Text("Budget: \$${job.minBudget} - \$${job.maxBudget}", fontWeight = FontWeight.Medium)
+                        Text("Budget: \$${job.skillScore?.let { String.format("%.0f", it) } ?: "0"} - \$${job.skillScore?.let { String.format("%.0f", it) } ?: "0"}", fontWeight = FontWeight.Medium)
                         Text("Language: ${job.language}", color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text("Progress: ${job.progress}%", color = MaterialTheme.colorScheme.onSurfaceVariant)
 
@@ -121,55 +153,38 @@ fun JobDetailScreen(
                             Button(onClick = { viewModel.approveProposal(jobId) }, enabled = job.status == FreelancerJob.JobStatus.AWAITING_APPROVAL) {
                                 Text("Approve")
                             }
-                            Button(onClick = { viewModel.deliverJob(jobId) }, enabled = job.status == FreelancerJob.JobStatus.IMPLEMENTED) {
-                                Text("Deliver")
-                            }
-                            Button(onClick = { viewModel.exportPackage(jobId, false) }) {
-                                Text("Export EN")
-                            }
-                            Button(onClick = { viewModel.exportPackage(jobId, true) }) {
-                                Text("Export AR")
+                            Button(onClick = { viewModel.confirmDelivery(jobId) }, enabled = job.status == FreelancerJob.JobStatus.IMPLEMENTED) {
+                                Text("Confirm Delivery")
                             }
                         }
                     }
                 }
 
-                // Tab Row
+                // Tabs
                 ScrollableTabRow(
                     selectedTabIndex = selectedTab,
                     onTabSelected = { selectedTab = it },
-                    tabs = { TabTitles.forEachIndexed { index, title ->
+                    indicatorColor = MaterialTheme.colorScheme.primary,
+                    dividerColor = MaterialTheme.colorScheme.outlineVariant,
+                    backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    selectedContentColor = MaterialTheme.colorScheme.primary
+                ) {
+                    TabTitles.forEachIndexed { index, title ->
                         androidx.compose.material3.Tab(
                             selected = selectedTab == index,
                             onClick = { selectedTab = index },
-                            text = { Text(title) },
-                            modifier = Modifier.padding(horizontal = 16.dp)
+                            text = { Text(title) }
                         )
-                    }},
-                    indicator = { tabPositions ->
-                        androidx.compose.foundation.layout.Box(
-                            Modifier
-                                .height(2.dp)
-                                .fillMaxWidth()
-                                .graphicsLayer {
-                                    translationX = tabPositions[selectedTab].left
-                                    scaleX = (tabPositions[selectedTab].right - tabPositions[selectedTab].left) / size.width
-                                }
-                                .background(MaterialTheme.colorScheme.primary)
-                        )
-                    },
-                    divider = { androidx.compose.foundation.layout.Box(Modifier.height(1.dp).fillMaxWidth().background(MaterialTheme.colorScheme.outlineVariant)) },
-                    contentColor = MaterialTheme.colorScheme.primary,
-                    backgroundColor = MaterialTheme.colorScheme.surfaceContainer
-                )
+                    }
+                }
 
                 // Tab Content
                 when (selectedTab) {
                     0 -> OverviewTab(job = job)
                     1 -> ProgressTab(job = job, events = jobEvents)
-                    2 -> QualityTab(job = job, uiState = uiState)
+                    2 -> QualityTab(job = job)
                     3 -> EventsTab(events = jobEvents)
-                    else -> OverviewTab(job = job)
                 }
             }
         }
@@ -178,39 +193,8 @@ fun JobDetailScreen(
 
 @Composable
 fun OverviewTab(job: FreelancerJob) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Requirements", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Spacer(modifier = Modifier.padding(top = 8.dp))
-                Text(job.requirements)
-            }
-        }
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Proposal", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Spacer(modifier = Modifier.padding(top = 8.dp))
-                Text(job.proposal ?: "No proposal yet")
-            }
-        }
-
-        if (job.files != null && job.files!!.isNotEmpty()) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        if (job.proposal != null && job.proposal!!.isNotBlank()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -218,21 +202,39 @@ fun OverviewTab(job: FreelancerJob) {
                 )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Files", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text("Proposal", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Spacer(modifier = Modifier.padding(top = 8.dp))
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(job.files!!) { file ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(file.key)
-                                Icon(Icons.Default.Description, contentDescription = file.key)
-                            }
-                        }
-                    }
+                    Text(job.proposal!!)
+                }
+            }
+        }
+
+        if (job.requirements.isNotBlank()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Requirements", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Spacer(modifier = Modifier.padding(top = 8.dp))
+                    Text(job.requirements)
+                }
+            }
+        }
+
+        if (job.plan != null && job.plan!!.isNotBlank()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Plan", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Spacer(modifier = Modifier.padding(top = 8.dp))
+                    Text(job.plan!!)
                 }
             }
         }
@@ -241,12 +243,7 @@ fun OverviewTab(job: FreelancerJob) {
 
 @Composable
 fun ProgressTab(job: FreelancerJob, events: List<AutomationEvent>) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -286,6 +283,7 @@ fun ProgressTab(job: FreelancerJob, events: List<AutomationEvent>) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Timeline", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Spacer(modifier = Modifier.padding(top = 8.dp))
+
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
@@ -300,13 +298,8 @@ fun ProgressTab(job: FreelancerJob, events: List<AutomationEvent>) {
 }
 
 @Composable
-fun QualityTab(job: FreelancerJob, uiState: com.aether.companion.ui.viewmodel.FreelancerViewModel.UIState) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
+fun QualityTab(job: FreelancerJob) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         if (job.qualityGate != null) {
             val qg = job.qualityGate!!
             Card(
@@ -322,7 +315,7 @@ fun QualityTab(job: FreelancerJob, uiState: com.aether.companion.ui.viewmodel.Fr
                     ) {
                         Text("Quality Gate", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                         if (qg.passed) {
-                            Box(
+                            androidx.compose.foundation.layout.Box(
                                 modifier = Modifier
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
                                     .background(
@@ -335,11 +328,11 @@ fun QualityTab(job: FreelancerJob, uiState: com.aether.companion.ui.viewmodel.Fr
                                     text = "PASSED",
                                     fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.onTertiaryContainer,
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+                                    fontWeight = FontWeight.Medium
                                 )
                             }
                         } else {
-                            Box(
+                            androidx.compose.foundation.layout.Box(
                                 modifier = Modifier
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
                                     .background(
@@ -352,7 +345,7 @@ fun QualityTab(job: FreelancerJob, uiState: com.aether.companion.ui.viewmodel.Fr
                                     text = "FAILED",
                                     fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.onErrorContainer,
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+                                    fontWeight = FontWeight.Medium
                                 )
                             }
                         }
@@ -370,8 +363,12 @@ fun QualityTab(job: FreelancerJob, uiState: com.aether.companion.ui.viewmodel.Fr
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Text(detail.key)
-                                    Text(detail.value, fontWeight = FontWeight.Medium)
+                                    Text(detail.message, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(detail.severity, color = when (detail.severity) {
+                                        "critical", "high" -> MaterialTheme.colorScheme.error
+                                        "medium" -> MaterialTheme.colorScheme.secondary
+                                        else -> MaterialTheme.colorScheme.tertiary
+                                    })
                                 }
                             }
                         }
@@ -391,7 +388,7 @@ fun QualityTab(job: FreelancerJob, uiState: com.aether.companion.ui.viewmodel.Fr
                         .padding(32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(Icons.Default.CheckCircle, contentDescription = "No quality gate", tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), size = 48.dp)
+                    Icon(Icons.Default.CheckCircle, contentDescription = "No quality gate", tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), modifier = Modifier.size(48.dp))
                     Spacer(modifier = Modifier.padding(top = 16.dp))
                     Text("No quality gate run yet", fontSize = 18.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
@@ -430,72 +427,82 @@ fun QualityTab(job: FreelancerJob, uiState: com.aether.companion.ui.viewmodel.Fr
 
 @Composable
 fun EventsTab(events: List<AutomationEvent>) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    if (events.isEmpty()) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(Icons.Default.History, contentDescription = "No events", tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), modifier = Modifier.size(48.dp))
+                Spacer(modifier = Modifier.padding(top = 16.dp))
+                Text("No events yet", fontSize = 18.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        )
+        return
+    }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        if (events.isEmpty()) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(Icons.Default.History, contentDescription = "No events", tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), size = 48.dp)
-                    Spacer(modifier = Modifier.padding(top = 16.dp))
-                    Text("No events yet", fontSize = 18.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            }
-        } else {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("All Events", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Spacer(modifier = Modifier.padding(top = 8.dp))
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(events) { event ->
-                            EventRow(event = event)
-                        }
-                    }
-                }
-            }
+        items(events) { event ->
+            EventRow(event = event)
         }
     }
 }
 
 @Composable
 fun EventRow(event: AutomationEvent) {
+    val (icon, color) = when (event.type) {
+        AutomationEvent.EventType.STAGE_CHANGED -> Icons.Default.History to MaterialTheme.colorScheme.primary
+        AutomationEvent.EventType.PROGRESS -> Icons.Default.PlayArrow to MaterialTheme.colorScheme.tertiary
+        AutomationEvent.EventType.HUMAN_REQUIRED -> Icons.Default.Warning to MaterialTheme.colorScheme.error
+        AutomationEvent.EventType.JOB_COMPLETED -> Icons.Default.CheckCircle to MaterialTheme.colorScheme.primary
+        AutomationEvent.EventType.JOB_FAILED -> Icons.Default.Error to MaterialTheme.colorScheme.error
+        AutomationEvent.EventType.QUALITY_GATE_RUN -> Icons.Default.FactCheck to MaterialTheme.colorScheme.secondary
+        else -> Icons.Default.Info to MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(event.type, fontWeight = FontWeight.Medium)
-                Text(event.timestamp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(icon, contentDescription = event.type.name, tint = color, modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.padding(end = 12.dp))
+                    Column {
+                        Text(event.type.name, fontWeight = FontWeight.Medium)
+                        if (event.details.isNotEmpty()) {
+                            Text(event.details.first().value.toString(), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                }
+                Text(
+                    java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
+                        .format(java.util.Date(event.timestamp * 1000)),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
-            Text(event.details ?: "", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (event.message != null && event.message!!.isNotBlank()) {
+                Spacer(modifier = Modifier.padding(top = 4.dp))
+                Text(event.message!!, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
     }
 }
-
-val TabTitles = listOf("Overview", "Progress", "Quality", "Events")
