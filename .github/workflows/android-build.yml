@@ -46,8 +46,8 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Verify Dependencies
-        run: ./gradlew dependencies --configuration debugRuntimeClasspath --no-daemon
+      - name: List Gradle Configurations
+        run: ./gradlew dependencies --configuration debugCompileClasspath --no-daemon 2>&1 || ./gradlew outcomingVariants --no-daemon 2>&1 || ./gradlew androidDependencies --no-daemon 2>&1
 
       - name: Clean and Build Debug APK (with fresh dependencies)
         run: ./gradlew clean assembleDebug --no-daemon --stacktrace --refresh-dependencies
