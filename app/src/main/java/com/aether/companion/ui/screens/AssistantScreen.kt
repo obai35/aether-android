@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardActions
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,8 +40,8 @@ import com.aether.companion.data.model.AIMessage
 import com.aether.companion.data.model.MessageRole
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.annotation.OptIn
+import androidx.compose.material3.ExperimentalMaterial3Api
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,7 +114,7 @@ fun AssistantScreen(
                 placeholder = { Text("Ask about jobs, start missions, export deliverables...") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                keyboardActions = androidx.compose.ui.text.input.KeyboardActions(
+                keyboardActions = KeyboardActions(
                     onDone = {
                         if (userInput.isNotBlank()) {
                             viewModel.sendAssistantMessage(userInput)
