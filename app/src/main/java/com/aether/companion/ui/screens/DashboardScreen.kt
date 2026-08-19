@@ -49,7 +49,10 @@ import com.aether.companion.R
 import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 import kotlinx.coroutines.launch
+import androidx.annotation.OptIn
+import androidx.compose.material3.ExperimentalMaterial3Api
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     viewModel: FreelancerViewModel = viewModel(),
@@ -59,8 +62,8 @@ fun DashboardScreen(
 ) {
     val stats by viewModel.stats.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val recentJobs by viewModel.jobs.collectAsStateWithLifecycle()
-        .map { it.take(5) }
+    val jobsList by viewModel.jobs.collectAsStateWithLifecycle()
+    val recentJobs = jobsList.take(5)
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -179,6 +182,7 @@ fun DashboardScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatCard(
     title: String,
@@ -215,6 +219,7 @@ fun StatCard(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JobSummaryCard(job: FreelancerJob) {
     Card(
@@ -239,6 +244,7 @@ fun JobSummaryCard(job: FreelancerJob) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JobStatusChip(status: FreelancerJob.JobStatus) {
     val (label, color) = when (status) {
