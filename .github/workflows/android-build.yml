@@ -47,7 +47,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Verify Dependencies
-        run: ./gradlew dependencies --configuration debugCompileClasspath --no-daemon | grep -E "navigation-compose|lifecycle-runtime-compose" || echo "DEPENDENCIES NOT FOUND"
+        run: ./gradlew dependencies --configuration debugCompileClasspath --no-daemon
 
       - name: Clean and Build Debug APK (with fresh dependencies)
         run: ./gradlew clean assembleDebug --no-daemon --stacktrace --refresh-dependencies
