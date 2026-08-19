@@ -21,6 +21,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.getString
+import androidx.navigation.ExperimentalNavigationApi
+import androidx.annotation.OptIn
 import com.aether.companion.R
 import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.FreelancerJob
@@ -32,6 +34,7 @@ import com.aether.companion.ui.screens.AutomationScreen
 import com.aether.companion.ui.screens.AssistantScreen
 import com.aether.companion.ui.screens.SettingsScreen
 
+@OptIn(ExperimentalNavigationApi::class)
 class MainActivity : ComponentActivity() {
     private val viewModel: FreelancerViewModel by viewModels()
     private var isConnected = false

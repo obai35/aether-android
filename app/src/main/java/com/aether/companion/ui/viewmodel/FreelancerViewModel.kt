@@ -6,6 +6,7 @@ import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.data.model.AIMessage
 import com.aether.companion.data.model.MessageRole
+import com.aether.companion.data.model.QualityGateResult
 import com.aether.companion.data.repository.FreelancerRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -111,9 +112,66 @@ class FreelancerViewModel(
         }
     }
 
+    fun startAutoMission(
+        query: String,
+        platforms: List<String>,
+        minBudget: Int,
+        maxBudget: Int,
+        qualityThreshold: Float,
+        autoDeliver: Boolean,
+        autoApprove: Boolean
+    ) {
+        _uiState.value = UIState.Success
+        viewModelScope.launch {
+            try {
+                repository.startAutoMission(
+                    query = query,
+                    platforms = platforms,
+                    minBudget = minBudget,
+                    maxBudget = maxBudget,
+                    qualityThreshold = qualityThreshold,
+                    autoDeliver = autoDeliver,
+                    autoApprove = autoApprove
+                )
+            } catch (e: Exception) {
+                _uiState.value = UIState.Error(e.message ?: "Failed to start auto mission")
+            }
+        }
+    }
+
+    fun runQualityGate(jobId: String) {
+        viewModelScope.launch {
+            try {
+                val result = repository.runQualityGate(jobId)
+                val currentState = _uiState.value
+                if (currentState is UIState.Success) {
+                    val updatedResults = currentState.qualityGateResults + (jobId to result)
+                    _uiState.value = currentState.copy(qualityGateResults = updatedResults)
+                }
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
+
+    fun updateSettings(apiUrl: String, apiKey: String) {
+        viewModelScope.launch {
+            try {
+                repository.updateSettings(apiUrl, apiKey)
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
+
     sealed interface UIState {
         data class Loading : UIState
-        data class Success : UIState
+        data class Success(
+            val assistantMessages: List<AIMessage> = emptyList(),
+            val isLoading: Boolean = false,
+            val autoMissionStatus: String = "",
+            val qualityGateResults: Map<String, QualityGateResult> = emptyMap()
+        ) : UIState
         data class Error(val message: String) : UIState
     }
 }

@@ -4,6 +4,7 @@ import com.aether.companion.data.model.AIAssistantRequest
 import com.aether.companion.data.model.AIAssistantResponse
 import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.data.model.FreelancerJob.JobStatus
+import com.aether.companion.data.model.QualityGateResult
 import kotlinx.coroutines.flow.Flow
 import okhttp3.OkHttpClient
 import okhttp3.Request as OkHttpRequest
@@ -47,22 +48,28 @@ interface AetherApiService {
 
     @POST("/api/assistant/chat")
     suspend fun chatWithAssistant(@Body request: AIAssistantRequest): RetrofitResponse<AIAssistantResponse>
+
+    @POST("/api/freelancer/auto_mission")
+    suspend fun startAutoMission(@Body request: AutoMissionRequest): RetrofitResponse<AutoMissionResponse>
+
+    @POST("/api/freelancer/jobs/{jobId}/quality_gate")
+    suspend fun runQualityGate(@Path("jobId") jobId: String): RetrofitResponse<QualityGateResult>
+
+    @POST("/api/settings")
+    suspend fun updateSettings(@Body request: SettingsRequest): RetrofitResponse<SettingsResponse>
 }
 
 data class HealthResponse(
-    val status: String,
-    val timestamp: Long
+    val status: String
 )
 
 data class ApproveResponse(
     val success: Boolean,
-    val jobId: String,
     val message: String?
 )
 
 data class DeliveryResponse(
     val success: Boolean,
-    val deliveryId: String?,
     val message: String?
 )
 
@@ -72,36 +79,43 @@ data class ExportResponse(
     val expiresAt: Long?
 )
 
-class AetherApiClient private constructor(private val service: AetherApiService) {
-    companion object {
-        private var INSTANCE: AetherApiClient? = null
-        private val moshi = com.squareup.moshi.Moshi.Builder()
-            .add(com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory())
-            .build()
+data class AutoMissionRequest(
+    val query: String,
+    val platforms: List<String>,
+    val minBudget: Int,
+    val maxBudget: Int,
+    val qualityThreshold: Float,
+    val autoDeliver: Boolean,
+    val autoApprove: Boolean
+)
 
-        fun getInstance(baseUrl: String = "https://your-aether-backend.com/"): AetherApiClient {
-            if (INSTANCE == null) {
-                val retrofit = Retrofit.Builder()
-                    .baseUrl(baseUrl)
-                    .addConverterFactory(MoshiConverterFactory.create(moshi))
-                    .build()
-                INSTANCE = AetherApiClient(retrofit.create(AetherApiService::class.java))
-            }
-            return INSTANCE!!
-        }
-    }
+data class AutoMissionResponse(
+    val success: Boolean,
+    val missionId: String?,
+    val message: String?
+)
 
-    fun getService(): AetherApiService = service
+data class SettingsRequest(
+    val apiUrl: String,
+    val apiKey: String
+)
 
-    // WebSocket connection for real-time updates
-    fun connectWebSocket(
-        apiKey: String,
-        listener: WebSocketListener
-    ): WebSocket {
-        val client = OkHttpClient.Builder().build()
-        val request = OkHttpRequest.Builder()
-            .url("wss://your-aether-backend.com/ws/agents?api_key=$apiKey")
-            .build()
-        return client.newWebSocket(request, listener)
-    }
-}
+data class SettingsResponse(
+    val success: Boolean,
+    val message: String?
+)
+
+data class AIAssistantRequest(
+    val message: String,
+    val context: Map<String, Any>? = null
+)
+
+data class AIAssistantResponse(
+    val response: String,
+    val toolCalls: List<ToolCall>? = null
+)
+
+data class ToolCall(
+    val name: String,
+    val arguments: Map<String, Any>
+)

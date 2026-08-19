@@ -1,16 +1,17 @@
 package com.aether.companion.data.repository
 
 import com.aether.companion.data.api.AetherApiService
+import com.aether.companion.data.api.AutoMissionRequest
+import com.aether.companion.data.api.AutoMissionResponse
+import com.aether.companion.data.api.SettingsRequest
 import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.data.model.FreelancerJob.JobStatus
+import com.aether.companion.data.model.QualityGateResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import retrofit2.Response
 
 class FreelancerRepository(
@@ -76,6 +77,54 @@ class FreelancerRepository(
             return if (response.isSuccessful) response.body()?.downloadUrl else null
         } catch (e: Exception) {
             return null
+        }
+    }
+
+    suspend fun startAutoMission(
+        query: String,
+        platforms: List<String>,
+        minBudget: Int,
+        maxBudget: Int,
+        qualityThreshold: Float,
+        autoDeliver: Boolean,
+        autoApprove: Boolean
+    ): AutoMissionResponse {
+        val request = AutoMissionRequest(
+            query = query,
+            platforms = platforms,
+            minBudget = minBudget,
+            maxBudget = maxBudget,
+            qualityThreshold = qualityThreshold,
+            autoDeliver = autoDeliver,
+            autoApprove = autoApprove
+        )
+        try {
+            val response = apiService.startAutoMission(request)
+            return if (response.isSuccessful) response.body()!! else AutoMissionResponse(false, null, "API error")
+        } catch (e: Exception) {
+            return AutoMissionResponse(false, null, e.message)
+        }
+    }
+
+    suspend fun runQualityGate(jobId: String): QualityGateResult {
+        try {
+            val response = apiService.runQualityGate(jobId)
+            return if (response.isSuccessful && response.body() != null) {
+                response.body()!!
+            } else {
+                QualityGateResult()
+            }
+        } catch (e: Exception) {
+            return QualityGateResult()
+        }
+    }
+
+    suspend fun updateSettings(apiUrl: String, apiKey: String) {
+        try {
+            val request = SettingsRequest(apiUrl, apiKey)
+            apiService.updateSettings(request)
+        } catch (e: Exception) {
+            // Handle error
         }
     }
 
