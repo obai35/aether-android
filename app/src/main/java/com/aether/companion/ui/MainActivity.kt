@@ -19,10 +19,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.navArgument
-import androidx.navigation.compose.getString
-import androidx.navigation.compose.ExperimentalNavigationApi
-import androidx.annotation.OptIn
 import com.aether.companion.R
 import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.FreelancerJob
@@ -34,7 +30,6 @@ import com.aether.companion.ui.screens.AutomationScreen
 import com.aether.companion.ui.screens.AssistantScreen
 import com.aether.companion.ui.screens.SettingsScreen
 
-@OptIn(ExperimentalNavigationApi::class)
 class MainActivity : ComponentActivity() {
     private val viewModel: FreelancerViewModel by viewModels()
     private var isConnected = false
@@ -67,9 +62,8 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(
                             route = "job_detail/{jobId}",
-                            arguments = listOf(navArgument("jobId") { type = NavType.StringType })
                         ) { backStackEntry ->
-                            val jobId = backStackEntry.getString() ?: ""
+                            val jobId = backStackEntry.getString("jobId") ?: ""
                             JobDetailScreen(
                                 viewModel = viewModel,
                                 jobId = jobId,
