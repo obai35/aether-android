@@ -2,9 +2,11 @@ package com.aether.companion.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -13,6 +15,10 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.FactCheck
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -90,10 +97,24 @@ fun JobDetailScreen(
         return
     }
 
+    val jobTitle = job.title
+    val jobPlatform = job.platform
+    val jobSkillScore = job.skillScore
+    val jobLanguage = job.language
+    val jobProgress = job.progress
+    val jobStatus = job.status
+    val jobAttempts = job.attempts
+    val jobProposal = job.proposal
+    val jobRequirements = job.requirements
+    val jobPlan = job.plan
+    val jobQualityGate = job.qualityGate
+    val jobReview = job.review
+    val jobTestResult = job.testResult
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(job.title) },
+                title = { Text(jobTitle) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -133,16 +154,16 @@ fun JobDetailScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column {
-                                Text(job.title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                                Text(jobTitle, fontWeight = FontWeight.Bold, fontSize = 20.sp)
                                 Spacer(modifier = Modifier.padding(top = 4.dp))
-                                Text(job.platform, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(jobPlatform, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
-                            JobStatusChip(status = job.status)
+                            JobStatusChip(status = jobStatus)
                         }
                         Spacer(modifier = Modifier.padding(top = 16.dp))
-                        Text("Budget: \$${job.skillScore?.let { String.format("%.0f", it) } ?: "0"} - \$${job.skillScore?.let { String.format("%.0f", it) } ?: "0"}", fontWeight = FontWeight.Medium)
-                        Text("Language: ${job.language}", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Progress: ${job.progress}%", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("Budget: \$${jobSkillScore?.let { String.format("%.0f", it) } ?: "0"} - \$${jobSkillScore?.let { String.format("%.0f", it) } ?: "0"}", fontWeight = FontWeight.Medium)
+                        Text("Language: ${jobLanguage}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("Progress: ${jobProgress}%", color = MaterialTheme.colorScheme.onSurfaceVariant)
 
                         Spacer(modifier = Modifier.padding(top = 16.dp))
 
@@ -150,10 +171,10 @@ fun JobDetailScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Button(onClick = { viewModel.approveProposal(jobId) }, enabled = job.status == FreelancerJob.JobStatus.AWAITING_APPROVAL) {
+                            Button(onClick = { viewModel.approveProposal(jobId) }, enabled = jobStatus == FreelancerJob.JobStatus.AWAITING_APPROVAL) {
                                 Text("Approve")
                             }
-                            Button(onClick = { viewModel.confirmDelivery(jobId) }, enabled = job.status == FreelancerJob.JobStatus.IMPLEMENTED) {
+                            Button(onClick = { viewModel.confirmDelivery(jobId) }, enabled = jobStatus == FreelancerJob.JobStatus.IMPLEMENTED) {
                                 Text("Confirm Delivery")
                             }
                         }
@@ -171,7 +192,7 @@ fun JobDetailScreen(
                     selectedContentColor = MaterialTheme.colorScheme.primary
                 ) {
                     TabTitles.forEachIndexed { index, title ->
-                        androidx.compose.material3.Tab(
+                        Tab(
                             selected = selectedTab == index,
                             onClick = { selectedTab = index },
                             text = { Text(title) }
@@ -181,9 +202,22 @@ fun JobDetailScreen(
 
                 // Tab Content
                 when (selectedTab) {
-                    0 -> OverviewTab(job = job)
-                    1 -> ProgressTab(job = job, events = jobEvents)
-                    2 -> QualityTab(job = job)
+                    0 -> OverviewTab(
+                        proposal = jobProposal,
+                        requirements = jobRequirements,
+                        plan = jobPlan
+                    )
+                    1 -> ProgressTab(
+                        progress = jobProgress,
+                        status = jobStatus,
+                        attempts = jobAttempts,
+                        testResult = jobTestResult,
+                        events = jobEvents
+                    )
+                    2 -> QualityTab(
+                        qualityGate = jobQualityGate,
+                        review = jobReview
+                    )
                     3 -> EventsTab(events = jobEvents)
                 }
             }
@@ -192,9 +226,13 @@ fun JobDetailScreen(
 }
 
 @Composable
-fun OverviewTab(job: FreelancerJob) {
+fun OverviewTab(
+    proposal: String?,
+    requirements: String,
+    plan: String?
+) {
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        if (job.proposal != null && job.proposal!!.isNotBlank()) {
+        if (proposal != null && proposal.isNotBlank()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -204,12 +242,12 @@ fun OverviewTab(job: FreelancerJob) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Proposal", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Spacer(modifier = Modifier.padding(top = 8.dp))
-                    Text(job.proposal!!)
+                    Text(proposal)
                 }
             }
         }
 
-        if (job.requirements.isNotBlank()) {
+        if (requirements.isNotBlank()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -219,12 +257,12 @@ fun OverviewTab(job: FreelancerJob) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Requirements", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Spacer(modifier = Modifier.padding(top = 8.dp))
-                    Text(job.requirements)
+                    Text(requirements)
                 }
             }
         }
 
-        if (job.plan != null && job.plan!!.isNotBlank()) {
+        if (plan != null && plan.isNotBlank()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -234,7 +272,7 @@ fun OverviewTab(job: FreelancerJob) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Plan", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Spacer(modifier = Modifier.padding(top = 8.dp))
-                    Text(job.plan!!)
+                    Text(plan)
                 }
             }
         }
@@ -242,7 +280,13 @@ fun OverviewTab(job: FreelancerJob) {
 }
 
 @Composable
-fun ProgressTab(job: FreelancerJob, events: List<AutomationEvent>) {
+fun ProgressTab(
+    progress: Int,
+    status: FreelancerJob.JobStatus,
+    attempts: Int,
+    testResult: com.aether.companion.data.model.TestResult?,
+    events: List<AutomationEvent>
+) {
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -251,11 +295,11 @@ fun ProgressTab(job: FreelancerJob, events: List<AutomationEvent>) {
             )
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("Progress: ${job.progress}%", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text("Progress: ${progress}%", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Spacer(modifier = Modifier.padding(top = 16.dp))
 
                 androidx.compose.material3.LinearProgressIndicator(
-                    progress = job.progress / 100f,
+                    progress = progress / 100f,
                     modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
@@ -263,12 +307,12 @@ fun ProgressTab(job: FreelancerJob, events: List<AutomationEvent>) {
 
                 Spacer(modifier = Modifier.padding(top = 16.dp))
 
-                Text("Stage: ${job.status.name}", fontWeight = FontWeight.Medium)
-                Text("Attempts: ${job.attempts}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Stage: ${status.name}", fontWeight = FontWeight.Medium)
+                Text("Attempts: ${attempts}", color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-                if (job.testResult != null && job.testResult!!.output.isNotBlank()) {
+                if (testResult != null && testResult.output.isNotBlank()) {
                     Spacer(modifier = Modifier.padding(top = 8.dp))
-                    Text("Test Result: ${job.testResult!!.output}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("Test Result: ${testResult.output}", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -298,10 +342,13 @@ fun ProgressTab(job: FreelancerJob, events: List<AutomationEvent>) {
 }
 
 @Composable
-fun QualityTab(job: FreelancerJob) {
+fun QualityTab(
+    qualityGate: com.aether.companion.data.model.QualityGateResult?,
+    review: com.aether.companion.data.model.CodeReviewResult?
+) {
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        if (job.qualityGate != null) {
-            val qg = job.qualityGate!!
+        if (qualityGate != null) {
+            val qg = qualityGate
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -395,7 +442,7 @@ fun QualityTab(job: FreelancerJob) {
             }
         }
 
-        if (job.review != null) {
+        if (review != null) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -405,16 +452,16 @@ fun QualityTab(job: FreelancerJob) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Code Review", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Spacer(modifier = Modifier.padding(top = 8.dp))
-                    Text(job.review!!.summary)
+                    Text(review.summary)
                     Spacer(modifier = Modifier.padding(top = 8.dp))
-                    Text("Score: ${job.review!!.score}/10", fontWeight = FontWeight.Medium)
-                    if (job.review!!.issues.isNotEmpty()) {
+                    Text("Score: ${review.score}/10", fontWeight = FontWeight.Medium)
+                    if (review.issues.isNotEmpty()) {
                         Spacer(modifier = Modifier.padding(top = 8.dp))
                         Text("Issues:", fontWeight = FontWeight.Medium)
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            items(job.review!!.issues) { issue ->
+                            items(review.issues) { issue ->
                                 Text("• $issue")
                             }
                         }
