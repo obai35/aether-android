@@ -2,10 +2,11 @@ package com.aether.companion.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,6 +25,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -58,17 +62,17 @@ fun DashboardScreen(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        androidx.compose.material3.TopAppBar(
-            title = { androidx.compose.material3.Text("Aether Freelancer") },
+        TopAppBar(
+            title = { Text("Aether Freelancer") },
             actions = {
-                androidx.compose.material3.IconButton(onClick = onNavigateToAssistant) {
+                IconButton(onClick = onNavigateToAssistant) {
                     Icon(Icons.Default.SmartToy, contentDescription = "AI Assistant")
                 }
-                androidx.compose.material3.IconButton(onClick = onNavigateToAutomation) {
+                IconButton(onClick = onNavigateToAutomation) {
                     Icon(Icons.Default.AutoAwesome, contentDescription = "Auto Mission")
                 }
             },
-            colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+            colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer
             )
         )
@@ -197,7 +201,7 @@ fun StatCard(
                 imageVector = icon,
                 contentDescription = title,
                 tint = color,
-                size = 28.dp
+                modifier = Modifier.size(28.dp)
             )
             Spacer(modifier = Modifier.padding(top = 8.dp))
             Text(value, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = color)
@@ -216,16 +220,16 @@ fun JobSummaryCard(job: FreelancerJob) {
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            androidx.compose.foundation.layout.Row(
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(job.title, fontWeight = FontWeight.Medium, fontSize = 16.sp)
                 JobStatusChip(status = job.status)
             }
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 8.dp))
+            Spacer(modifier = Modifier.padding(top = 8.dp))
             Text(job.platform, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 8.dp))
+            Spacer(modifier = Modifier.padding(top = 8.dp))
             Text("\$" + String.format("%.0f", job.skillScore ?: 0.0), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
         }
     }
