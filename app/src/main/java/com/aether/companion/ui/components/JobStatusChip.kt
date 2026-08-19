@@ -1,18 +1,21 @@
 package com.aether.companion.ui.components
 
-import androidx.compose.material3.Chip
-import androidx.compose.material3.ChipDefaults
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aether.companion.data.model.FreelancerJob
-import androidx.annotation.OptIn
-import androidx.compose.material3.ExperimentalMaterial3Api
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JobStatusChip(status: FreelancerJob.JobStatus) {
     val (label, color) = when (status) {
@@ -29,14 +32,20 @@ fun JobStatusChip(status: FreelancerJob.JobStatus) {
         else -> status.name to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
-    Chip(
-        onClick = {},
-        modifier = Modifier.wrapContentSize(),
-        enabled = false,
-        colors = ChipDefaults.chipColors(
-            containerColor = color.copy(alpha = 0.2f)
-        )
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .background(
+                color = color.copy(alpha = 0.2f),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
-        Text(label, fontSize = 12.sp, color = color)
+        Text(
+            text = label,
+            fontSize = 12.sp,
+            color = color,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
