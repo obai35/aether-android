@@ -30,32 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aether.companion.R
-import com.aether.companion.data.model.FreelancerJob
-import com.aether.companion.ui.components.JobStatusChip
-import com.aether.companion.ui.viewmodel.FreelancerViewModel
-import kotlinx.coroutines.launch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -84,17 +58,17 @@ fun DashboardScreen(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        TopAppBar(
-            title = { Text("Aether Freelancer") },
+        androidx.compose.material3.TopAppBar(
+            title = { androidx.compose.material3.Text("Aether Freelancer") },
             actions = {
-                IconButton(onClick = onNavigateToAssistant) {
+                androidx.compose.material3.IconButton(onClick = onNavigateToAssistant) {
                     Icon(Icons.Default.SmartToy, contentDescription = "AI Assistant")
                 }
-                IconButton(onClick = onNavigateToAutomation) {
+                androidx.compose.material3.IconButton(onClick = onNavigateToAutomation) {
                     Icon(Icons.Default.AutoAwesome, contentDescription = "Auto Mission")
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(
+            colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer
             )
         )
@@ -157,7 +131,7 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text("Recent Jobs", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    TextButton(onClick = onNavigateToJobs) {
+                    androidx.compose.material3.TextButton(onClick = onNavigateToJobs) {
                         Text("View All")
                     }
                 }
@@ -242,16 +216,16 @@ fun JobSummaryCard(job: FreelancerJob) {
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(
+            androidx.compose.foundation.layout.Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(job.title, fontWeight = FontWeight.Medium, fontSize = 16.sp)
                 JobStatusChip(status = job.status)
             }
-            Spacer(modifier = Modifier.padding(top = 8.dp))
+            androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 8.dp))
             Text(job.platform, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Spacer(modifier = Modifier.padding(top = 8.dp))
+            androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 8.dp))
             Text("\$" + String.format("%.0f", job.skillScore ?: 0.0), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
         }
     }
