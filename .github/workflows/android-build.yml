@@ -47,7 +47,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Verify Dependencies
-        run: ./gradlew dependencies --configuration debugCompileClasspath --no-daemon
+        run: ./gradlew dependencies --configuration debugRuntimeClasspath --no-daemon
 
       - name: Clean and Build Debug APK (with fresh dependencies)
         run: ./gradlew clean assembleDebug --no-daemon --stacktrace --refresh-dependencies
