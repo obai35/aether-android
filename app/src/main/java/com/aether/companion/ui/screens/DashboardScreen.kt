@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
 package com.aether.companion.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
@@ -49,10 +51,6 @@ import com.aether.companion.R
 import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 import kotlinx.coroutines.launch
-import androidx.annotation.OptIn
-import androidx.compose.material3.ExperimentalMaterial3Api
-
-@file:OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
 fun DashboardScreen(
