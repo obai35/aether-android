@@ -51,8 +51,8 @@ fun JobDetailScreen(
     jobId: String,
     onNavigateBack: () -> Unit = {}
 ) {
-    val job by viewModel.getJob(jobId).collectAsStateWithLifecycle()
-    val jobEvents by viewModel.getJobEvents(jobId).collectAsStateWithLifecycle()
+    val job by viewModel.getJob(jobId).collectAsStateWithLifecycle(initialValue = null)
+    val jobEvents by viewModel.getJobEvents(jobId).collectAsStateWithLifecycle(initialValue = emptyList())
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var selectedTab by remember { mutableStateOf(0) }
 
