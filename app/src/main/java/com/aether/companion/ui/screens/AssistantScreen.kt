@@ -48,10 +48,8 @@ fun AssistantScreen(
     viewModel: FreelancerViewModel = viewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val assistantMessages by viewModel.assistantMessages.collectAsStateWithLifecycle()
     var userInput by remember { mutableStateOf("") }
-    val messages = uiState.assistantMessages
-    val isLoading = uiState.isLoading
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -75,7 +73,7 @@ fun AssistantScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(messages) { message ->
+            items(assistantMessages) { message ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
@@ -83,6 +81,7 @@ fun AssistantScreen(
                             MessageRole.USER -> MaterialTheme.colorScheme.primaryContainer
                             MessageRole.ASSISTANT -> MaterialTheme.colorScheme.surfaceContainerHigh
                             MessageRole.SYSTEM -> MaterialTheme.colorScheme.tertiaryContainer
+                            MessageRole.TOOL -> MaterialTheme.colorScheme.secondaryContainer
                         }
                     )
                 ) {
@@ -97,25 +96,6 @@ fun AssistantScreen(
                         Text(
                             text = message.content,
                             color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
-            }
-
-            if (isLoading) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                    )
-                ) {
-                    androidx.compose.foundation.layout.Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        androidx.compose.material3.CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
