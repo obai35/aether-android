@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardActions
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -113,15 +112,7 @@ fun AssistantScreen(
                 onValueChange = { userInput = it },
                 placeholder = { Text("Ask about jobs, start missions, export deliverables...") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        if (userInput.isNotBlank()) {
-                            viewModel.sendAssistantMessage(userInput)
-                            userInput = ""
-                        }
-                    }
-                )
+                singleLine = true
             )
         }
     }
