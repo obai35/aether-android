@@ -49,6 +49,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aether.companion.R
 import com.aether.companion.data.model.FreelancerJob
+import com.aether.companion.ui.components.JobStatusChip
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 import kotlinx.coroutines.launch
 
@@ -238,31 +239,5 @@ fun JobSummaryCard(job: FreelancerJob) {
             Spacer(modifier = Modifier.padding(top = 8.dp))
             Text("\$" + String.format("%.0f", job.minBudget.toDouble()), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
         }
-    }
-}
-
-@Composable
-fun JobStatusChip(status: FreelancerJob.JobStatus) {
-    val (label, color) = when (status) {
-        FreelancerJob.JobStatus.PENDING -> "Pending" to MaterialTheme.colorScheme.secondary
-        FreelancerJob.JobStatus.SEARCHING -> "Searching" to MaterialTheme.colorScheme.primary
-        FreelancerJob.JobStatus.WORKING -> "Working" to MaterialTheme.colorScheme.tertiary
-        FreelancerJob.JobStatus.AWAITING_APPROVAL -> "Awaiting Approval" to MaterialTheme.colorScheme.warning
-        FreelancerJob.JobStatus.IMPLEMENTED -> "Implemented" to MaterialTheme.colorScheme.primary
-        FreelancerJob.JobStatus.DELIVERED -> "Delivered" to MaterialTheme.colorScheme.tertiary
-        FreelancerJob.JobStatus.FAILED -> "Failed" to MaterialTheme.colorScheme.error
-        FreelancerJob.JobStatus.NEEDS_FIXES -> "Needs Fixes" to MaterialTheme.colorScheme.warning
-        FreelancerJob.JobStatus.QUALITY_GATE_FAILED -> "Quality Gate Failed" to MaterialTheme.colorScheme.error
-        FreelancerJob.JobStatus.REQUIRES_HUMAN -> "Requires Human" to MaterialTheme.colorScheme.error
-        else -> status.name to MaterialTheme.colorScheme.onSurfaceVariant
-    }
-
-    androidx.compose.material3.Chip(
-        onClick = {},
-        colors = androidx.compose.material3.ChipDefaults.chipColors(
-            containerColor = color.copy(alpha = 0.2f)
-        )
-    ) {
-        Text(label, fontSize = 12.sp, color = color)
     }
 }

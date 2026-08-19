@@ -38,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aether.companion.R
 import com.aether.companion.data.model.FreelancerJob
+import com.aether.companion.ui.components.JobStatusChip
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 
 @Composable
@@ -153,31 +154,5 @@ fun JobCard(
             androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 4.dp))
             Text("\$${job.minBudget} - \$${job.maxBudget}", fontWeight = FontWeight.Medium)
         }
-    }
-}
-
-@Composable
-fun JobStatusChip(status: FreelancerJob.JobStatus) {
-    val (color, text) = when (status) {
-        FreelancerJob.JobStatus.PENDING -> MaterialTheme.colorScheme.outline to "Pending"
-        FreelancerJob.JobStatus.SEARCHING -> MaterialTheme.colorScheme.primary to "Searching"
-        FreelancerJob.JobStatus.WORKING -> MaterialTheme.colorScheme.secondary to "Working"
-        FreelancerJob.JobStatus.AWAITING_APPROVAL -> MaterialTheme.colorScheme.tertiary to "Awaiting Approval"
-        FreelancerJob.JobStatus.IMPLEMENTED -> MaterialTheme.colorScheme.primary to "Implemented"
-        FreelancerJob.JobStatus.DELIVERED -> MaterialTheme.colorScheme.tertiary to "Delivered"
-        FreelancerJob.JobStatus.FAILED -> MaterialTheme.colorScheme.error to "Failed"
-        FreelancerJob.JobStatus.NEEDS_FIXES -> MaterialTheme.colorScheme.warning to "Needs Fixes"
-        FreelancerJob.JobStatus.QUALITY_GATE_FAILED -> MaterialTheme.colorScheme.error to "Quality Gate Failed"
-        FreelancerJob.JobStatus.REQUIRES_HUMAN -> MaterialTheme.colorScheme.error to "Requires Human"
-        else -> MaterialTheme.colorScheme.onSurfaceVariant to status.name
-    }
-
-    androidx.compose.material3.Chip(
-        onClick = {},
-        colors = androidx.compose.material3.ChipDefaults.chipColors(
-            containerColor = color.copy(alpha = 0.2f)
-        )
-    ) {
-        Text(text, fontSize = 12.sp, color = color)
     }
 }
