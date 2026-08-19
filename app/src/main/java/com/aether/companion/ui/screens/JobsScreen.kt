@@ -7,9 +7,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -55,7 +61,7 @@ fun JobsScreen(
                 }
             },
             actions = {
-                androidx.compose.material3.DropdownMenu(
+                DropdownMenu(
                     expanded = filterStatus != null,
                     onDismissRequest = { filterStatus = null },
                 ) {
@@ -98,7 +104,7 @@ fun JobsScreen(
                         Text(
                             "No jobs found${if (filterStatus != null) " for status ${filterStatus.name}" else ""}",
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
@@ -128,7 +134,7 @@ fun JobCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxSize(),
+            .padding(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         ),
@@ -160,15 +166,18 @@ fun JobStatusChip(status: FreelancerJob.JobStatus) {
         FreelancerJob.JobStatus.IMPLEMENTED -> MaterialTheme.colorScheme.primary to "Implemented"
         FreelancerJob.JobStatus.DELIVERED -> MaterialTheme.colorScheme.tertiary to "Delivered"
         FreelancerJob.JobStatus.FAILED -> MaterialTheme.colorScheme.error to "Failed"
-        FreelancerJob.JobStatus.COMPLETED -> MaterialTheme.colorScheme.primary to "Completed"
+        FreelancerJob.JobStatus.NEEDS_FIXES -> MaterialTheme.colorScheme.warning to "Needs Fixes"
+        FreelancerJob.JobStatus.QUALITY_GATE_FAILED -> MaterialTheme.colorScheme.error to "Quality Gate Failed"
+        FreelancerJob.JobStatus.REQUIRES_HUMAN -> MaterialTheme.colorScheme.error to "Requires Human"
+        else -> MaterialTheme.colorScheme.onSurfaceVariant to status.name
     }
 
     androidx.compose.material3.Chip(
-        modifier = Modifier.wrapContentSize(),
         onClick = {},
-        label = { Text(text, color = MaterialTheme.colorScheme.onSurface, fontSize = 10.sp) },
-        colors = androidx.compose.material3.ChipDefaults.colors(
+        colors = androidx.compose.material3.ChipDefaults.chipColors(
             containerColor = color.copy(alpha = 0.2f)
         )
-    )
+    ) {
+        Text(text, fontSize = 12.sp, color = color)
+    }
 }

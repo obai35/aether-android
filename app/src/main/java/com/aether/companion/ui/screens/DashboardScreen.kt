@@ -234,7 +234,7 @@ fun JobSummaryCard(job: FreelancerJob) {
             Spacer(modifier = Modifier.padding(top = 8.dp))
             Text(job.platform, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.padding(top = 8.dp))
-            Text("\$${String.format("%.0f", job.budget)}", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text("\$${String.format("%.0f", job.minBudget))", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
         }
     }
 }
@@ -249,6 +249,9 @@ fun JobStatusChip(status: FreelancerJob.JobStatus) {
         FreelancerJob.JobStatus.IMPLEMENTED -> "Implemented" to MaterialTheme.colorScheme.primary
         FreelancerJob.JobStatus.DELIVERED -> "Delivered" to MaterialTheme.colorScheme.tertiary
         FreelancerJob.JobStatus.FAILED -> "Failed" to MaterialTheme.colorScheme.error
+        FreelancerJob.JobStatus.NEEDS_FIXES -> "Needs Fixes" to MaterialTheme.colorScheme.warning
+        FreelancerJob.JobStatus.QUALITY_GATE_FAILED -> "Quality Gate Failed" to MaterialTheme.colorScheme.error
+        FreelancerJob.JobStatus.REQUIRES_HUMAN -> "Requires Human" to MaterialTheme.colorScheme.error
         else -> status.name to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
