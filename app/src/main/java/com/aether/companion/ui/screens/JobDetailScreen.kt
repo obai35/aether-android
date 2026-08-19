@@ -97,19 +97,21 @@ fun JobDetailScreen(
         return
     }
 
-    val jobTitle = job.title
-    val jobPlatform = job.platform
-    val jobSkillScore = job.skillScore
-    val jobLanguage = job.language
-    val jobProgress = job.progress
-    val jobStatus = job.status
-    val jobAttempts = job.attempts
-    val jobProposal = job.proposal
-    val jobRequirements = job.requirements
-    val jobPlan = job.plan
-    val jobQualityGate = job.qualityGate
-    val jobReview = job.review
-    val jobTestResult = job.testResult
+    // Copy to local vals to avoid smart cast issues
+    val currentJob = job
+    val jobTitle = currentJob.title
+    val jobPlatform = currentJob.platform
+    val jobSkillScore = currentJob.skillScore
+    val jobLanguage = currentJob.language
+    val jobProgress = currentJob.progress
+    val jobStatus = currentJob.status
+    val jobAttempts = currentJob.attempts
+    val jobProposal = currentJob.proposal
+    val jobRequirements = currentJob.requirements
+    val jobPlan = currentJob.plan
+    val jobQualityGate = currentJob.qualityGate
+    val jobReview = currentJob.review
+    val jobTestResult = currentJob.testResult
 
     Scaffold(
         topBar = {
