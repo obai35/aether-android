@@ -27,6 +27,14 @@ class FreelancerViewModel(
     val isConnected = repository.isConnected
     val stats = repository.stats
 
+    fun getJob(jobId: String) = jobs.map { list ->
+        list.firstOrNull { it.id == jobId }
+    }
+
+    fun getJobEvents(jobId: String) = automationEvents.map { events ->
+        events.filter { it.jobId == jobId }
+    }
+
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState = _uiState.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), UIState.Loading)
 

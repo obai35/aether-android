@@ -16,8 +16,6 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Chip
-import androidx.compose.material3.ChipDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -324,18 +322,38 @@ fun QualityTab(job: FreelancerJob, uiState: com.aether.companion.ui.viewmodel.Fr
                     ) {
                         Text("Quality Gate", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                         if (qg.passed) {
-                            Chip(
-                                onClick = {},
-                                colors = ChipDefaults.chipColors(containerColor = MaterialTheme.colorScheme.tertiary)
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
+                                        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                                    )
+                                    .padding(horizontal = 12.dp, vertical = 6.dp)
                             ) {
-                                Text("PASSED", fontSize = 12.sp, color = MaterialTheme.colorScheme.onTertiaryContainer)
+                                Text(
+                                    text = "PASSED",
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+                                )
                             }
                         } else {
-                            Chip(
-                                onClick = {},
-                                colors = ChipDefaults.chipColors(containerColor = MaterialTheme.colorScheme.error)
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.error.copy(alpha = 0.2f),
+                                        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                                    )
+                                    .padding(horizontal = 12.dp, vertical = 6.dp)
                             ) {
-                                Text("FAILED", fontSize = 12.sp, color = MaterialTheme.colorScheme.onErrorContainer)
+                                Text(
+                                    text = "FAILED",
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+                                )
                             }
                         }
                     }
