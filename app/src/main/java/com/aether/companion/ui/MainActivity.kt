@@ -21,7 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.getString
-import androidx.navigation.ExperimentalNavigationApi
+import androidx.navigation.compose.ExperimentalNavigationApi
 import androidx.annotation.OptIn
 import com.aether.companion.R
 import com.aether.companion.data.model.AutomationEvent
