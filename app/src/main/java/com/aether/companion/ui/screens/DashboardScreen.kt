@@ -52,7 +52,8 @@ import kotlinx.coroutines.launch
 import androidx.annotation.OptIn
 import androidx.compose.material3.ExperimentalMaterial3Api
 
-@OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun DashboardScreen(
     viewModel: FreelancerViewModel = viewModel(),
@@ -182,7 +183,6 @@ fun DashboardScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatCard(
     title: String,
@@ -219,7 +219,6 @@ fun StatCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JobSummaryCard(job: FreelancerJob) {
     Card(
@@ -244,7 +243,6 @@ fun JobSummaryCard(job: FreelancerJob) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JobStatusChip(status: FreelancerJob.JobStatus) {
     val (label, color) = when (status) {
