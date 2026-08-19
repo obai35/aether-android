@@ -203,10 +203,6 @@ fun AutomationScreen(
                             Switch(
                                 checked = autoDeliver,
                                 onCheckedChange = { autoDeliver = it },
-                                colors = androidx.compose.material3.SwitchDefaults.colors(
-                                    thumbColor = MaterialTheme.colorScheme.primary,
-                                    trackColor = MaterialTheme.colorScheme.primaryContainer
-                                )
                             )
                         }
 
@@ -220,10 +216,6 @@ fun AutomationScreen(
                             Switch(
                                 checked = autoApprove,
                                 onCheckedChange = { autoApprove = it },
-                                colors = androidx.compose.material3.SwitchDefaults.colors(
-                                    thumbColor = MaterialTheme.colorScheme.primary,
-                                    trackColor = MaterialTheme.colorScheme.primaryContainer
-                                )
                             )
                         }
                     }
