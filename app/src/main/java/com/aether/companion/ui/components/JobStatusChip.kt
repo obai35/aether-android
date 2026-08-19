@@ -1,5 +1,3 @@
-@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
-
 package com.aether.companion.ui.components
 
 import androidx.compose.material3.Chip
@@ -11,7 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aether.companion.data.model.FreelancerJob
+import androidx.annotation.OptIn
+import androidx.compose.material3.ExperimentalMaterial3Api
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JobStatusChip(status: FreelancerJob.JobStatus) {
     val (label, color) = when (status) {
