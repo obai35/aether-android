@@ -46,8 +46,8 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Clean and Build Debug APK
+        run: ./gradlew clean assembleDebug --no-daemon --stacktrace
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
@@ -78,34 +78,18 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app-debug-apk
-          path: artifacts/
+          path: artifacts/debug
 
       - name: Download Release APK
         uses: actions/download-artifact@v4
         with:
           name: app-release-apk-unsigned
-          path: artifacts/
+          path: artifacts/release
 
-      - name: Upload to Release
+      - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            artifacts/app-debug.apk
-            artifacts/app-release-unsigned.apk
-          tag_name: ${{ github.ref_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  notify:
-    name: Notify on Build Complete
-    needs: [build, release]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build Status
-        run: |
-          echo "Build completed for ${{ github.repository }}"
-          echo "Debug APK: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          if [ "${{ needs.release.result }}" == "success" ]; then
-            echo "Release APK uploaded to GitHub Release"
-          fi
+            artifacts/debug/app-debug.apk
+            artifacts/release/app-release-unsigned.apk
+          generate_release_notes: true
