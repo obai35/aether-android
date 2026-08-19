@@ -444,7 +444,7 @@ fun EventsTab(events: List<AutomationEvent>) {
                 Spacer(modifier = Modifier.padding(top = 16.dp))
                 Text("No events yet", fontSize = 18.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-        )
+        }
         return
     }
 

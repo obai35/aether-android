@@ -69,10 +69,9 @@ class FreelancerViewModel(
                         AutomationEvent.EventType.HUMAN_REQUIRED -> {
                             _pendingHumanAction.value = event
                         }
-                        AutomationEvent.EventType.JOB_COMPLETED -> {
-                            repository.refreshJobs()
+                        AutomationEvent.EventType.JOB_COMPLETED, AutomationEvent.EventType.JOB_FAILED -> {
+                            _pendingHumanAction.value = null
                         }
-                        else -> {}
                     }
                 }
             }
@@ -80,23 +79,14 @@ class FreelancerViewModel(
     }
 
     fun sendAssistantMessage(message: String) {
-        val userMessage = AIMessage(
-            id = UUID.randomUUID().toString(),
-            role = MessageRole.USER,
-            content = message,
-            timestamp = System.currentTimeMillis()
-        )
-        _assistantMessages.value = _assistantMessages.value + userMessage
-
         viewModelScope.launch {
-            // TODO: Call API
-            val responseMessage = AIMessage(
-                id = UUID.randomUUID().toString(),
-                role = MessageRole.ASSISTANT,
-                content = "Received: $message (API integration pending)",
-                timestamp = System.currentTimeMillis()
-            )
-            _assistantMessages.value = _assistantMessages.value + responseMessage
+            _assistantMessages.value = _assistantMessages.value + AIMessage(role = MessageRole.USER, content = message)
+            try {
+                val response = repository.sendAssistantMessage(message)
+                _assistantMessages.value = _assistantMessages.value + AIMessage(role = MessageRole.ASSISTANT, content = response)
+            } catch (e: Exception) {
+                _assistantMessages.value = _assistantMessages.value + AIMessage(role = MessageRole.ASSISTANT, content = "Error: ${e.message}")
+            }
         }
     }
 
@@ -162,6 +152,17 @@ class FreelancerViewModel(
         }
     }
 
+    fun exportPackage(jobId: String, arabic: Boolean) {
+        viewModelScope.launch {
+            try {
+                val result = repository.exportPackage(jobId, arabic)
+                // Handle result
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
+
     fun updateSettings(apiUrl: String, apiKey: String) {
         viewModelScope.launch {
             try {
@@ -173,13 +174,10 @@ class FreelancerViewModel(
     }
 
     sealed interface UIState {
-        data class Loading : UIState
         data class Success(
-            val assistantMessages: List<AIMessage> = emptyList(),
-            val isLoading: Boolean = false,
-            val autoMissionStatus: String = "",
             val qualityGateResults: Map<String, QualityGateResult> = emptyMap()
         ) : UIState
         data class Error(val message: String) : UIState
+        object Loading : UIState
     }
 }
