@@ -63,8 +63,10 @@ dependencies {
     // Material Components (for themes)
     implementation("com.google.android.material:material:1.12.0")
 
-    // Navigation - Use 2.7.6 (ensure navArgument, getString, NavType are available)
+    // Navigation - Use 2.7.6 with explicit ktx dependencies
     implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-common-ktx:2.7.6")
 
     // Networking - Retrofit + OkHttp
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
