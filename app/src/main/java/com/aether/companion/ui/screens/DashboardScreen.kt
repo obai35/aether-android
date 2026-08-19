@@ -22,10 +22,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Chip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -181,7 +183,7 @@ fun DashboardScreen(
 fun StatCard(
     title: String,
     value: String,
-    icon: androidx.compose.material.icons.filled.Work,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
     color: Color
 ) {
     Card(
@@ -250,7 +252,7 @@ fun JobStatusChip(status: FreelancerJob.JobStatus) {
         else -> status.name to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
-    androidx.compose.material3.Chip(
+    Chip(
         onClick = {},
         colors = androidx.compose.material3.ChipDefaults.chipColors(
             containerColor = color.copy(alpha = 0.2f)
@@ -258,10 +260,4 @@ fun JobStatusChip(status: FreelancerJob.JobStatus) {
     ) {
         Text(label, fontSize = 12.sp, color = color)
     }
-}
-
-@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
-@Composable
-fun TextButton(onClick: () -> Unit, content: @Composable () -> Unit) {
-    androidx.compose.material3.TextButton(onClick = onClick, content = content)
 }

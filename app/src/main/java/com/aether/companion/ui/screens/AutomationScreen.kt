@@ -45,10 +45,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import com.aether.companion.R
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
-import androidx.annotation.OptIn
-import androidx.compose.material3.ExperimentalMaterial3Api
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AutomationScreen(
     viewModel: FreelancerViewModel = viewModel(),
