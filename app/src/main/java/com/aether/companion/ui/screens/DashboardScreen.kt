@@ -22,7 +22,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Chip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -261,7 +260,7 @@ fun JobStatusChip(status: FreelancerJob.JobStatus) {
         else -> status.name to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
-    Chip(
+    androidx.compose.material3.Chip(
         onClick = {},
         colors = androidx.compose.material3.ChipDefaults.chipColors(
             containerColor = color.copy(alpha = 0.2f)
