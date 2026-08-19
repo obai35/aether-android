@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
 package com.aether.companion.ui.components
 
 import androidx.compose.material3.Chip
@@ -5,6 +7,9 @@ import androidx.compose.material3.ChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.aether.companion.data.model.FreelancerJob
 
 @Composable
@@ -25,6 +30,8 @@ fun JobStatusChip(status: FreelancerJob.JobStatus) {
 
     Chip(
         onClick = {},
+        modifier = Modifier.wrapContentSize(),
+        enabled = false,
         colors = ChipDefaults.chipColors(
             containerColor = color.copy(alpha = 0.2f)
         )
