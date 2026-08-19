@@ -44,3 +44,104 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
+fun AssistantScreen(
+    viewModel: FreelancerViewModel = viewModel(),
+    onNavigateBack: () -> Unit = {}
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var userInput by remember { mutableStateOf("") }
+    val messages = uiState.assistantMessages
+    val isLoading = uiState.isLoading
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        TopAppBar(
+            title = { Text("AI Assistant") },
+            navigationIcon = {
+                IconButton(onClick = onNavigateBack) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+        )
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(messages) { message ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = when (message.role) {
+                            MessageRole.USER -> MaterialTheme.colorScheme.primaryContainer
+                            MessageRole.ASSISTANT -> MaterialTheme.colorScheme.surfaceContainerHigh
+                            MessageRole.SYSTEM -> MaterialTheme.colorScheme.tertiaryContainer
+                        }
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = message.role.name,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp
+                        )
+                        androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 4.dp))
+                        Text(
+                            text = message.content,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+
+            if (isLoading) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                    )
+                ) {
+                    androidx.compose.foundation.layout.Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        androidx.compose.material3.CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+        }
+
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            androidx.compose.material3.TextField(
+                value = userInput,
+                onValueChange = { userInput = it },
+                placeholder = { Text("Ask about jobs, start missions, export deliverables...") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardActions = androidx.compose.ui.text.input.KeyboardActions(
+                    onDone = {
+                        if (userInput.isNotBlank()) {
+                            viewModel.sendAssistantMessage(userInput)
+                            userInput = ""
+                        }
+                    }
+                )
+            )
+        }
+    }
+}

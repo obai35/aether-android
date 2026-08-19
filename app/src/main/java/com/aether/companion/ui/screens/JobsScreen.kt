@@ -39,3 +39,136 @@ fun JobsScreen(
     viewModel: FreelancerViewModel = viewModel(),
     onNavigateToJob: (String) -> Unit = {}
 ) {
+    val jobs by viewModel.jobs.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var filterStatus by remember { mutableStateOf<FreelancerJob.JobStatus?>(null) }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        TopAppBar(
+            title = { Text("Jobs") },
+            navigationIcon = {
+                IconButton(onClick = { /* navigate back */ }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                }
+            },
+            actions = {
+                androidx.compose.material3.DropdownMenu(
+                    expanded = filterStatus != null,
+                    onDismissRequest = { filterStatus = null },
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("All Statuses") },
+                        onClick = { filterStatus = null }
+                    )
+                    FreelancerJob.JobStatus.values().forEach { status ->
+                        DropdownMenuItem(
+                            text = { Text(status.name) },
+                            onClick = { filterStatus = status }
+                        )
+                    }
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+        )
+
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                if (uiState.isLoading && jobs.isEmpty()) {
+                    androidx.compose.foundation.layout.Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    val filteredJobs = jobs.filter { filterStatus == null || it.status == filterStatus }
+                    if (filteredJobs.isEmpty()) {
+                        Text(
+                            "No jobs found${if (filterStatus != null) " for status ${filterStatus.name}" else ""}",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(filteredJobs) { job ->
+                                JobCard(
+                                    job = job,
+                                    onClick = { onNavigateToJob(job.id) }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun JobCard(
+    job: FreelancerJob,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxSize(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        ),
+        onClick = onClick
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            androidx.compose.foundation.layout.Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(job.title, fontWeight = FontWeight.Bold, maxLines = 1, overflow = androidx.compose.ui.text.TextOverflow.Ellipsis)
+                JobStatusChip(status = job.status)
+            }
+            androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 8.dp))
+            Text(job.platform, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 4.dp))
+            Text("\$${job.minBudget} - \$${job.maxBudget}", fontWeight = FontWeight.Medium)
+        }
+    }
+}
+
+@Composable
+fun JobStatusChip(status: FreelancerJob.JobStatus) {
+    val (color, text) = when (status) {
+        FreelancerJob.JobStatus.PENDING -> MaterialTheme.colorScheme.outline to "Pending"
+        FreelancerJob.JobStatus.SEARCHING -> MaterialTheme.colorScheme.primary to "Searching"
+        FreelancerJob.JobStatus.WORKING -> MaterialTheme.colorScheme.secondary to "Working"
+        FreelancerJob.JobStatus.AWAITING_APPROVAL -> MaterialTheme.colorScheme.tertiary to "Awaiting Approval"
+        FreelancerJob.JobStatus.IMPLEMENTED -> MaterialTheme.colorScheme.primary to "Implemented"
+        FreelancerJob.JobStatus.DELIVERED -> MaterialTheme.colorScheme.tertiary to "Delivered"
+        FreelancerJob.JobStatus.FAILED -> MaterialTheme.colorScheme.error to "Failed"
+        FreelancerJob.JobStatus.COMPLETED -> MaterialTheme.colorScheme.primary to "Completed"
+    }
+
+    androidx.compose.material3.Chip(
+        modifier = Modifier.wrapContentSize(),
+        onClick = {},
+        label = { Text(text, color = MaterialTheme.colorScheme.onSurface, fontSize = 10.sp) },
+        colors = androidx.compose.material3.ChipDefaults.colors(
+            containerColor = color.copy(alpha = 0.2f)
+        )
+    )
+}
