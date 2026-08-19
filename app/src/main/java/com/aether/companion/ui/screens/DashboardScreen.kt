@@ -185,7 +185,7 @@ fun StatCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .weight(1f, true),
+            .weight(1f),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
