@@ -558,21 +558,4 @@ fun EventRow(event: AutomationEvent) {
             }
         }
     }
-}ent.details.first().value.toString(), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
-                    }
-                }
-                Text(
-                    java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
-                        .format(java.util.Date(event.timestamp * 1000)),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            if (event.message != null && event.message!!.isNotBlank()) {
-                Spacer(modifier = Modifier.padding(top = 4.dp))
-                Text(event.message!!, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        }
-    }
 }
