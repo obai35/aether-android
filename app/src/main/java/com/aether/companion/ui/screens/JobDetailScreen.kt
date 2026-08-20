@@ -2,6 +2,9 @@ package com.aether.companion.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import com.aether.companion.data.model.AutomationEvent
+import com.aether.companion.data.model.EventType
+import com.aether.companion.data.model.EventData
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
