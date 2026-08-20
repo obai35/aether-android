@@ -140,7 +140,7 @@ class FreelancerRepository(
 
     suspend fun updateSettings(apiUrl: String, apiKey: String) {
         try {
-            NetworkModule.getInstance().saveSettings(apiUrl, apiKey)
+            NetworkModule.saveSettings(apiUrl, apiKey)
         } catch (e: Exception) {
             // Handle error
         }

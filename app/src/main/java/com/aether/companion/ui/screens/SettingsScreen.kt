@@ -20,6 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aether.companion.R
 import com.aether.companion.data.api.NetworkModule
+import com.aether.companion.data.api.getNetworkModule
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 
 @Composable
@@ -41,7 +43,7 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit = {}
 ) {
     // Load current settings from NetworkModule
-    val networkModule = NetworkModule.getInstance()
+    val networkModule = getNetworkModule(LocalContext.current)
     var apiUrl by remember { mutableStateOf(networkModule.getCurrentApiUrl()) }
     var apiKey by remember { mutableStateOf(networkModule.getCurrentApiKey()) }
     var enableNotifications by remember { mutableStateOf(true) }
