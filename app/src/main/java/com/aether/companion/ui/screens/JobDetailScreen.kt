@@ -339,16 +339,17 @@ fun ProgressTab(
 
 @Composable
 fun QualityTab(
-    qualityGate: com.aether.companion.data.model.QualityGateResult?,
-    review: com.aether.companion.data.model.CodeReviewResult?
+    qualityGate: com.aether.companion.data.model.QualityGate?,
+    review: com.aether.companion.data.model.CodeReview?
 ) {
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         if (qualityGate != null) {
             val qg = qualityGate
+            val passed = qg.passed
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (qg.passed) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.errorContainer
+                    containerColor = if (passed) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.errorContainer
                 )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -357,7 +358,7 @@ fun QualityTab(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text("Quality Gate", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                        if (qg.passed) {
+                        if (passed) {
                             androidx.compose.foundation.layout.Box(
                                 modifier = Modifier
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -394,20 +395,20 @@ fun QualityTab(
                         }
                     }
                     Spacer(modifier = Modifier.padding(top = 8.dp))
-                    Text("Score: ${String.format("%.1f", qg.score * 100)}%", fontWeight = FontWeight.Medium)
+                    Text("Lint: ${if (qg.lintPassed) "Passed" else "Failed"} | Security: ${if (qg.securityPassed) "Passed" else "Failed"} | Tests: ${if (qg.testsPassed) "Passed" else "Failed"}", fontWeight = FontWeight.Medium)
 
-                    if (qg.details.isNotEmpty()) {
+                    if (qg.issues.isNotEmpty()) {
                         Spacer(modifier = Modifier.padding(top = 8.dp))
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            items(qg.details) { detail ->
+                            items(qg.issues) { issue ->
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Text(detail.message, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                    Text(detail.severity, color = when (detail.severity) {
+                                    Text("${issue.type}: ${issue.message}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(issue.severity, color = when (issue.severity) {
                                         "critical", "high" -> MaterialTheme.colorScheme.error
                                         "medium" -> MaterialTheme.colorScheme.secondary
                                         else -> MaterialTheme.colorScheme.tertiary
@@ -458,7 +459,7 @@ fun QualityTab(
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             items(review.issues) { issue ->
-                                Text("• $issue")
+                                Text("• ${issue.message} (${issue.file}:${issue.line})")
                             }
                         }
                     }
