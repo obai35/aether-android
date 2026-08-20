@@ -93,18 +93,21 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     StatCard(
+                        modifier = Modifier.weight(1f),
                         title = "Total Jobs",
                         value = stats?.totalJobs.toString() ?: "0",
                         icon = Icons.Default.Work,
                         color = MaterialTheme.colorScheme.primary
                     )
                     StatCard(
+                        modifier = Modifier.weight(1f),
                         title = "Completed",
                         value = stats?.completedJobs.toString() ?: "0",
                         icon = Icons.Default.CheckCircle,
                         color = MaterialTheme.colorScheme.tertiary
                     )
                     StatCard(
+                        modifier = Modifier.weight(1f),
                         title = "Pending",
                         value = stats?.pendingJobs.toString() ?: "0",
                         icon = Icons.Default.HourglassTop,
@@ -117,12 +120,14 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     StatCard(
+                        modifier = Modifier.weight(1f),
                         title = "Failed",
                         value = stats?.failedJobs.toString() ?: "0",
                         icon = Icons.Default.Error,
                         color = MaterialTheme.colorScheme.error
                     )
                     StatCard(
+                        modifier = Modifier.weight(1f),
                         title = "Earnings",
                         value = "\$${String.format("%.0f", stats?.totalEarnings ?: 0.0)}",
                         icon = Icons.Default.AttachMoney,
@@ -178,16 +183,15 @@ fun DashboardScreen(
 
 @Composable
 fun StatCard(
+    modifier: Modifier = Modifier,
     title: String,
     value: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     color: Color
 ) {
     Card(
-        modifier = Modifier
-            .padding(16.dp)
-            .width(0.dp)
-            .weight(1f),
+        modifier = modifier
+            .padding(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
