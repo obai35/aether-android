@@ -27,8 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -184,14 +184,8 @@ fun JobDetailScreen(
                 }
 
                 // Tabs
-                ScrollableTabRow(
+                TabRow(
                     selectedTabIndex = selectedTab,
-                    onTabSelected = { selectedTab = it },
-                    indicatorColor = MaterialTheme.colorScheme.primary,
-                    dividerColor = MaterialTheme.colorScheme.outlineVariant,
-                    backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                    selectedContentColor = MaterialTheme.colorScheme.primary
                 ) {
                     TabTitles.forEachIndexed { index, title ->
                         Tab(
