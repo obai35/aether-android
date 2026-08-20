@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -178,6 +179,6 @@ class FreelancerViewModel(
             val qualityGateResults: Map<String, QualityGateResult> = emptyMap()
         ) : UIState
         data class Error(val message: String) : UIState
-        object Loading : UIState
+        object Loading : UIState()
     }
 }

@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.aether.companion.R
 import com.aether.companion.ui.components.JobStatusChip
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
@@ -65,12 +64,10 @@ fun JobDetailScreen(
     onNavigateBack: () -> Unit = {}
 ) {
     val job by viewModel.getJob(jobId).collectAsStateWithLifecycle(
-        lifecycle = LocalLifecycleOwner.current.lifecycle,
         minActiveState = androidx.lifecycle.Lifecycle.State.STARTED,
         initialValue = null
     )
     val jobEvents by viewModel.getJobEvents(jobId).collectAsStateWithLifecycle(
-        lifecycle = LocalLifecycleOwner.current.lifecycle,
         minActiveState = androidx.lifecycle.Lifecycle.State.STARTED,
         initialValue = emptyList()
     )
