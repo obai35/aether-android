@@ -1,8 +1,9 @@
 package com.aether.companion.data.api
 
 import android.content.Context
-import androidx.datastore.preferences.PreferencesKeys
 import androidx.datastore.preferences.core.MutablePreferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.first
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.moshi.Moshi
@@ -47,7 +48,7 @@ object NetworkModule {
 
     fun initialize(context: Context) {
         // Build DataStore
-        dataStore = context.preferencesDataStore("aether_settings")
+        dataStore = context.preferencesDataStore(name = "aether_settings")
 
         // Load saved settings synchronously on init
         runBlocking(Dispatchers.IO) {
