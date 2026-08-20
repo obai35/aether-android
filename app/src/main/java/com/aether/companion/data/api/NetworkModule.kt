@@ -1,8 +1,8 @@
 package com.aether.companion.data.api
 
 import android.content.Context
-import androidx.datastore.preferences.MutablePreferences
-import androidx.datastore.preferences.PreferencesDataStore
+import androidx.datastore.preferences.core.MutablePreferences
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.moshi.Moshi
@@ -39,7 +39,7 @@ object NetworkModule {
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    private var dataStore: PreferencesDataStore? = null
+    private var dataStore: androidx.datastore.preferences.PreferencesDataStore? = null
     private var currentApiUrl = DEFAULT_API_URL
     private var currentApiKey = DEFAULT_API_KEY
 
