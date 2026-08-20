@@ -57,7 +57,7 @@ object NetworkModule {
         createApiService()
     }
 
-    private fun loadSettings() {
+    private suspend fun loadSettings() {
         dataStore?.data?.first()?.let { prefs: Preferences ->
             currentApiUrl = prefs[KEY_API_URL] ?: DEFAULT_API_URL
             currentApiKey = prefs[KEY_API_KEY] ?: DEFAULT_API_KEY
