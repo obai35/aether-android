@@ -3,6 +3,7 @@ package com.aether.companion.ui.screens
 import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.EventType
 import com.aether.companion.data.model.EventData
+import com.aether.companion.data.model.FreelancerJob
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -52,24 +53,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aether.companion.R
-import com.aether.companion.data.model.FreelancerJob
-import com.aether.companion.ui.components.JobStatusChip
-import com.aether.companion.ui.viewmodel.FreelancerViewModel
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aether.companion.R
-import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.ui.components.JobStatusChip
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 
@@ -79,42 +62,32 @@ fun JobDetailScreen(
     jobId: String,
     onNavigateBack: () -> Unit = {}
 ) {
-    val job by viewModel.getJob(jobId).collectAsStateWithLifecycle(initialValue = null)
-    val jobEvents by viewModel.getJobEvents(jobId).collectAsStateWithLifecycle(initialValue = emptyList())
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var selectedTab by remember { mutableStateOf(0) }
-
-    val TabTitles = listOf("Overview", "Progress", "Quality", "Events")
+    val job by viewModel.getJob(jobId).collectAsStateWithLifecycle()
+    val jobEvents by viewModel.getJobEvents(jobId).collectAsStateWithLifecycle()
 
     if (job == null) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Job Details") },
+                    title = { Text("Job Not Found") },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
-                    )
+                    }
                 )
-            },
-            content = { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    CircularProgressIndicator()
-                    Text("Loading job...")
-                }
             }
-        )
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.padding(top = 16.dp))
+                Text("Loading job...")
+            }
+        }
         return
     }
 
@@ -150,96 +123,96 @@ fun JobDetailScreen(
                     IconButton(onClick = { viewModel.exportPackage(jobId, true) }) {
                         Icon(Icons.Default.Language, contentDescription = "Export Arabic")
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
+                }
             )
-        },
-        content = { innerPadding ->
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            // Header with status and platform
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Job Header
-                Card(
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
-                    )
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column {
-                                Text(jobTitle, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                                Spacer(modifier = Modifier.padding(top = 4.dp))
-                                Text(jobPlatform, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                            JobStatusChip(status = jobStatus)
-                        }
-                        Spacer(modifier = Modifier.padding(top = 16.dp))
-                        Text("Budget: \$${jobSkillScore?.let { String.format("%.0f", it) } ?: "0"} - \$${jobSkillScore?.let { String.format("%.0f", it) } ?: "0"}", fontWeight = FontWeight.Medium)
-                        Text("Language: ${jobLanguage}", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("Progress: ${jobProgress}%", color = MaterialTheme.colorScheme.onSurfaceVariant)
-
-                        Spacer(modifier = Modifier.padding(top = 16.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Button(onClick = { viewModel.approveProposal(jobId) }, enabled = jobStatus == FreelancerJob.JobStatus.AWAITING_APPROVAL) {
-                                Text("Approve")
-                            }
-                            Button(onClick = { viewModel.confirmDelivery(jobId) }, enabled = jobStatus == FreelancerJob.JobStatus.IMPLEMENTED) {
-                                Text("Confirm Delivery")
-                            }
-                        }
-                    }
+                    JobStatusChip(status = jobStatus)
+                    Text(
+                        text = jobPlatform,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
 
-                // Tabs
-                TabRow(
-                    selectedTabIndex = selectedTab,
-                ) {
-                    TabTitles.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTab == index,
-                            onClick = { selectedTab = index },
-                            text = { Text(title) }
+                if (jobSkillScore != null) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            "Skill Match: ${String.format("%.0f", jobSkillScore * 100)}%",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            "Language: $jobLanguage",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
+            }
 
-                // Tab Content
-                when (selectedTab) {
-                    0 -> OverviewTab(
-                        proposal = jobProposal,
-                        requirements = jobRequirements,
-                        plan = jobPlan
+            Spacer(modifier = Modifier.padding(top = 16.dp))
+
+            // Tab row
+            val tabTitles = listOf("Overview", "Progress", "Quality", "Events")
+            var selectedTab by remember { mutableStateOf(0) }
+
+            TabRow(
+                selectedTabIndex = selectedTab,
+                onTabSelected = { selectedTab = it },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                tabTitles.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = { Text(title) }
                     )
-                    1 -> ProgressTab(
-                        progress = jobProgress,
-                        status = jobStatus,
-                        attempts = jobAttempts,
-                        testResult = jobTestResult,
-                        events = jobEvents
-                    )
-                    2 -> QualityTab(
-                        qualityGate = jobQualityGate,
-                        review = jobReview
-                    )
-                    3 -> EventsTab(events = jobEvents)
                 }
             }
+
+            Spacer(modifier = Modifier.padding(top = 16.dp))
+
+            // Tab content
+            when (selectedTab) {
+                0 -> OverviewTab(
+                    proposal = jobProposal,
+                    requirements = jobRequirements,
+                    plan = jobPlan
+                )
+                1 -> ProgressTab(
+                    progress = jobProgress,
+                    status = jobStatus,
+                    attempts = jobAttempts,
+                    testResult = jobTestResult,
+                    events = jobEvents
+                )
+                2 -> QualityTab(
+                    qualityGate = jobQualityGate,
+                    review = jobReview
+                )
+                3 -> EventsTab(events = jobEvents)
+            }
         }
-    )
+    }
 }
 
 @Composable
@@ -526,13 +499,13 @@ fun EventsTab(events: List<AutomationEvent>) {
 @Composable
 fun EventRow(event: AutomationEvent) {
     val (icon, color) = when (event.type) {
-        com.aether.companion.data.model.EventType.STAGE_CHANGED -> Icons.Default.History to MaterialTheme.colorScheme.primary
-        com.aether.companion.data.model.EventType.JOB_PROGRESS -> Icons.Default.PlayArrow to MaterialTheme.colorScheme.tertiary
-        com.aether.companion.data.model.EventType.HUMAN_REQUIRED -> Icons.Default.Warning to MaterialTheme.colorScheme.error
-        com.aether.companion.data.model.EventType.JOB_COMPLETED -> Icons.Default.CheckCircle to MaterialTheme.colorScheme.primary
-        com.aether.companion.data.model.EventType.JOB_FAILED -> Icons.Default.Error to MaterialTheme.colorScheme.error
-        com.aether.companion.data.model.EventType.QUALITY_GATE_STARTED,
-        com.aether.companion.data.model.EventType.QUALITY_GATE_COMPLETED -> Icons.Default.FactCheck to MaterialTheme.colorScheme.secondary
+        EventType.STAGE_CHANGED -> Icons.Default.History to MaterialTheme.colorScheme.primary
+        EventType.JOB_PROGRESS -> Icons.Default.PlayArrow to MaterialTheme.colorScheme.tertiary
+        EventType.HUMAN_REQUIRED -> Icons.Default.Warning to MaterialTheme.colorScheme.error
+        EventType.JOB_COMPLETED -> Icons.Default.CheckCircle to MaterialTheme.colorScheme.primary
+        EventType.JOB_FAILED -> Icons.Default.Error to MaterialTheme.colorScheme.error
+        EventType.QUALITY_GATE_STARTED,
+        EventType.QUALITY_GATE_COMPLETED -> Icons.Default.FactCheck to MaterialTheme.colorScheme.secondary
         else -> Icons.Default.Info to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
@@ -554,13 +527,13 @@ fun EventRow(event: AutomationEvent) {
                     Column {
                         Text(event.type.name, fontWeight = FontWeight.Medium)
                         val detailsText = when (event.data) {
-                            is AutomationEvent.EventData.ProgressData -> event.data.message
-                            is AutomationEvent.EventData.StageData -> event.data.stage
-                            is AutomationEvent.EventData.QualityGateData -> if (event.data.passed) "Passed" else "Failed"
-                            is AutomationEvent.EventData.HumanRequiredData -> event.data.reason
-                            is AutomationEvent.EventData.JobCompletedData -> event.data.summary ?: "Completed"
-                            is AutomationEvent.EventData.JobFailedData -> "Failed"
-                            is AutomationEvent.EventData.LogData -> event.data.message
+                            is EventData.ProgressData -> event.data.message
+                            is EventData.StageData -> event.data.stage
+                            is EventData.QualityGateData -> if (event.data.passed) "Passed" else "Failed"
+                            is EventData.HumanRequiredData -> event.data.reason
+                            is EventData.JobCompletedData -> event.data.summary ?: "Completed"
+                            is EventData.JobFailedData -> "Failed"
+                            is EventData.LogData -> event.data.message
                             else -> ""
                         }
                         if (detailsText.isNotBlank()) {
