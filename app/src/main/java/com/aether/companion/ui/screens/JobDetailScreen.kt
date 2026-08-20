@@ -16,9 +16,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.PlayArrow
@@ -62,8 +64,14 @@ fun JobDetailScreen(
     jobId: String,
     onNavigateBack: () -> Unit = {}
 ) {
-    val job by viewModel.getJob(jobId).collectAsStateWithLifecycle()
-    val jobEvents by viewModel.getJobEvents(jobId).collectAsStateWithLifecycle()
+    val job by viewModel.getJob(jobId).collectAsStateWithLifecycle(
+        lifecycle = androidx.lifecycle.Lifecycle.State.STARTED,
+        initialValue = null
+    )
+    val jobEvents by viewModel.getJobEvents(jobId).collectAsStateWithLifecycle(
+        lifecycle = androidx.lifecycle.Lifecycle.State.STARTED,
+        initialValue = emptyList()
+    )
 
     if (job == null) {
         Scaffold(
@@ -177,7 +185,7 @@ fun JobDetailScreen(
 
             TabRow(
                 selectedTabIndex = selectedTab,
-                onTabSelected = { selectedTab = it },
+                onTabSelected = { index -> selectedTab = index },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 tabTitles.forEachIndexed { index, title ->
