@@ -127,11 +127,7 @@ fun SettingsScreen(
                             Text("Push Notifications")
                             Switch(
                                 checked = enableNotifications,
-                                onCheckedChange = { enableNotifications = it },
-                                colors = androidx.compose.material3.SwitchDefaults.colors(
-                                    thumbColor = MaterialTheme.colorScheme.primary,
-                                    trackColor = MaterialTheme.colorScheme.primaryContainer
-                                )
+                                onCheckedChange = { enableNotifications = it }
                             )
                         }
 
@@ -144,11 +140,7 @@ fun SettingsScreen(
                             Text("Biometric Authentication")
                             Switch(
                                 checked = enableBiometric,
-                                onCheckedChange = { enableBiometric = it },
-                                colors = androidx.compose.material3.SwitchDefaults.colors(
-                                    thumbColor = MaterialTheme.colorScheme.primary,
-                                    trackColor = MaterialTheme.colorScheme.primaryContainer
-                                )
+                                onCheckedChange = { enableBiometric = it }
                             )
                         }
                     }
@@ -172,11 +164,7 @@ fun SettingsScreen(
                             Text("Enable Auto Sync")
                             Switch(
                                 checked = autoSync,
-                                onCheckedChange = { autoSync = it },
-                                colors = androidx.compose.material3.SwitchDefaults.colors(
-                                    thumbColor = MaterialTheme.colorScheme.primary,
-                                    trackColor = MaterialTheme.colorScheme.primaryContainer
-                                )
+                                onCheckedChange = { autoSync = it }
                             )
                         }
 
