@@ -124,10 +124,10 @@ fun JobDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { viewModel.exportPackage(jobId, false) }) {
+                    IconButton(onClick = { viewModel.exportPackage(jobId) }) {
                         Icon(Icons.Default.Download, contentDescription = "Export English")
                     }
-                    IconButton(onClick = { viewModel.exportPackage(jobId, true) }) {
+                    IconButton(onClick = { viewModel.exportPackage(jobId) }) {
                         Icon(Icons.Default.Language, contentDescription = "Export Arabic")
                     }
                 }

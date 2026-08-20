@@ -10,8 +10,6 @@ import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.data.model.FreelancerJob.JobStatus
 import com.aether.companion.data.model.QualityGateResult
-import com.aether.companion.data.model.AIMessage
-import com.aether.companion.data.model.MessageRole
 import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,19 +76,10 @@ class FreelancerRepository(
 
     suspend fun sendAssistantMessage(message: String): String {
         try {
-            val request = AIAssistantRequest(
-                messages = listOf(
-                    AIMessage(
-                        id = UUID.randomUUID().toString(),
-                        role = MessageRole.USER,
-                        content = message,
-                        timestamp = System.currentTimeMillis()
-                    )
-                )
-            )
+            val request = com.aether.companion.data.api.AIAssistantRequest(message = message)
             val response = apiService.chatWithAssistant(request)
             return if (response.isSuccessful && response.body() != null) {
-                response.body()!!.message.content
+                response.body()!!.response
             } else {
                 "Error: Failed to get response"
             }
