@@ -3,11 +3,16 @@ package com.aether.companion.data.repository
 import com.aether.companion.data.api.AetherApiService
 import com.aether.companion.data.api.AutoMissionRequest
 import com.aether.companion.data.api.AutoMissionResponse
+import com.aether.companion.data.api.AIAssistantRequest
+import com.aether.companion.data.api.AIAssistantResponse
 import com.aether.companion.data.api.SettingsRequest
 import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.data.model.FreelancerJob.JobStatus
 import com.aether.companion.data.model.QualityGateResult
+import com.aether.companion.data.model.AIMessage
+import com.aether.companion.data.model.MessageRole
+import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -68,6 +73,29 @@ class FreelancerRepository(
             return response.isSuccessful
         } catch (e: Exception) {
             return false
+        }
+    }
+
+    suspend fun sendAssistantMessage(message: String): String {
+        try {
+            val request = AIAssistantRequest(
+                messages = listOf(
+                    AIMessage(
+                        id = UUID.randomUUID().toString(),
+                        role = MessageRole.USER,
+                        content = message,
+                        timestamp = System.currentTimeMillis()
+                    )
+                )
+            )
+            val response = apiService.chatWithAssistant(request)
+            return if (response.isSuccessful && response.body() != null) {
+                response.body()!!.message.content
+            } else {
+                "Error: Failed to get response"
+            }
+        } catch (e: Exception) {
+            return "Error: ${e.message}"
         }
     }
 

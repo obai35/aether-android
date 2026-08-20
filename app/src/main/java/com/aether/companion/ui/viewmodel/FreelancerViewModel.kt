@@ -137,7 +137,7 @@ class FreelancerViewModel(
         autoDeliver: Boolean,
         autoApprove: Boolean
     ) {
-        _uiState.value = UIState.Success
+        _uiState.value = UIState.Success()
         viewModelScope.launch {
             try {
                 repository.startAutoMission(
@@ -170,10 +170,10 @@ class FreelancerViewModel(
         }
     }
 
-    fun exportPackage(jobId: String, arabic: Boolean) {
+    fun exportPackage(jobId: String) {
         viewModelScope.launch {
             try {
-                val result = repository.exportPackage(jobId, arabic)
+                val result = repository.exportPackage(jobId)
                 // Handle result
             } catch (e: Exception) {
                 // Handle error
