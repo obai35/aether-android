@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.aether.companion.R
 import com.aether.companion.ui.components.JobStatusChip
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
@@ -540,7 +541,6 @@ fun EventRow(event: AutomationEvent) {
                             is EventData.QualityGateData -> if (event.data.passed) "Passed" else "Failed"
                             is EventData.HumanRequiredData -> event.data.reason
                             is EventData.JobCompletedData -> event.data.summary ?: "Completed"
-                            is EventData.JobFailedData -> "Failed"
                             is EventData.LogData -> event.data.message
                             else -> ""
                         }

@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -92,7 +93,7 @@ fun JobsScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                if (uiState.isLoading && jobs.isEmpty()) {
+                if (uiState is FreelancerViewModel.UIState.Loading && jobs.isEmpty()) {
                     androidx.compose.foundation.layout.Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -100,7 +101,8 @@ fun JobsScreen(
                         CircularProgressIndicator()
                     }
                 } else {
-                    val filteredJobs = jobs.filter { filterStatus == null || it.status == filterStatus }
+                    val currentFilterStatus = filterStatus
+                    val filteredJobs = jobs.filter { currentFilterStatus == null || it.status == currentFilterStatus }
                     if (filteredJobs.isEmpty()) {
                         Text(
                             "No jobs found${if (filterStatus != null) " for status ${filterStatus.name}" else ""}",
@@ -152,7 +154,7 @@ fun JobCard(
             androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 8.dp))
             Text(job.platform, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
             androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 4.dp))
-            Text("\$${job.minBudget} - \$${job.maxBudget}", fontWeight = FontWeight.Medium)
+            Text("Progress: ${job.progress}%", fontWeight = FontWeight.Medium)
         }
     }
 }
