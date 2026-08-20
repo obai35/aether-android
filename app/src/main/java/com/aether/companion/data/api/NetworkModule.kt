@@ -5,6 +5,8 @@ import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.preferencesDataStore
+import androidx.datastore.preferences.core.getAnd
+import androidx.datastore.preferences.core.set
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
@@ -20,10 +22,11 @@ import java.util.concurrent.TimeUnit
 private val KEY_API_URL = stringPreferencesKey("api_url")
 private val KEY_API_KEY = stringPreferencesKey("api_key")
 
-class NetworkModule private constructor() {
+// Constants at top level
+private const val DEFAULT_API_URL = "https://your-aether-backend.com"
+private const val DEFAULT_API_KEY = ""
 
-    private const val DEFAULT_API_URL = "https://your-aether-backend.com"
-    private const val DEFAULT_API_KEY = ""
+class NetworkModule private constructor() {
 
     @Volatile
     private var INSTANCE: NetworkModule? = null
@@ -75,7 +78,7 @@ class NetworkModule private constructor() {
         currentApiUrl = apiUrl
         currentApiKey = apiKey
 
-        dataStore?.edit { prefs: MutablePreferences ->
+        dataStore?.edit { prefs ->
             prefs[KEY_API_URL] = apiUrl
             prefs[KEY_API_KEY] = apiKey
         }
