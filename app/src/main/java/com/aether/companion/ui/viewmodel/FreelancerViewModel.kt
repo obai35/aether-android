@@ -36,8 +36,8 @@ class FreelancerViewModel(
         events.filter { it.jobId == jobId }
     }
 
-    private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
-    val uiState = _uiState.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), UIState.Loading)
+    private val _uiState = MutableStateFlow<UIState>(UIState.Loading())
+    val uiState = _uiState.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), UIState.Loading())
 
     private val _assistantMessages = MutableStateFlow<List<AIMessage>>(emptyList())
     val assistantMessages = _assistantMessages.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -73,6 +73,7 @@ class FreelancerViewModel(
                         AutomationEvent.EventType.JOB_COMPLETED, AutomationEvent.EventType.JOB_FAILED -> {
                             _pendingHumanAction.value = null
                         }
+                        else -> {}
                     }
                 }
             }
