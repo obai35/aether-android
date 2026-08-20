@@ -22,7 +22,7 @@ class FreelancerRepository(
     private val context: Context,
     private val scope: CoroutineScope
 ) {
-    private val apiService = NetworkModule.getInstance().getApiService()
+    private val apiService = NetworkModule.getApiService()
     private val _jobs = MutableStateFlow<List<FreelancerJob>>(emptyList())
     val jobs = _jobs.stateIn(scope, SharingStarted.WhileSubscribed(), emptyList())
 
