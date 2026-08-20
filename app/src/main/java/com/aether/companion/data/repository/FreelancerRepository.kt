@@ -1,11 +1,12 @@
 package com.aether.companion.data.repository
 
+import android.content.Context
 import com.aether.companion.data.api.AetherApiService
 import com.aether.companion.data.api.AutoMissionRequest
 import com.aether.companion.data.api.AutoMissionResponse
 import com.aether.companion.data.api.AIAssistantRequest
 import com.aether.companion.data.api.AIAssistantResponse
-import com.aether.companion.data.api.SettingsRequest
+import com.aether.companion.data.api.NetworkModule
 import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.data.model.FreelancerJob.JobStatus
@@ -18,9 +19,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import retrofit2.Response
 
 class FreelancerRepository(
-    private val apiService: AetherApiService,
+    private val context: Context,
     private val scope: CoroutineScope
 ) {
+    private val apiService = NetworkModule.getInstance().getApiService()
     private val _jobs = MutableStateFlow<List<FreelancerJob>>(emptyList())
     val jobs = _jobs.stateIn(scope, SharingStarted.WhileSubscribed(), emptyList())
 
@@ -138,8 +140,7 @@ class FreelancerRepository(
 
     suspend fun updateSettings(apiUrl: String, apiKey: String) {
         try {
-            val request = SettingsRequest(apiUrl, apiKey)
-            apiService.updateSettings(request)
+            NetworkModule.getInstance().saveSettings(apiUrl, apiKey)
         } catch (e: Exception) {
             // Handle error
         }

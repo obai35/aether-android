@@ -15,13 +15,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aether.companion.R
+import com.aether.companion.data.api.NetworkModule
 import com.aether.companion.data.model.AutomationEvent
 import com.aether.companion.data.model.FreelancerJob
+import com.aether.companion.data.repository.FreelancerRepository
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 import com.aether.companion.ui.screens.DashboardScreen
 import com.aether.companion.ui.screens.JobDetailScreen
@@ -31,7 +34,10 @@ import com.aether.companion.ui.screens.AssistantScreen
 import com.aether.companion.ui.screens.SettingsScreen
 
 class MainActivity : ComponentActivity() {
-    private val viewModel: FreelancerViewModel by viewModels()
+    private val viewModel: FreelancerViewModel by viewModels {
+        val repository = FreelancerRepository(this, lifecycleScope)
+        FreelancerViewModel(repository)
+    }
     private var isConnected = false
     private var shouldAutoConnect = true
 

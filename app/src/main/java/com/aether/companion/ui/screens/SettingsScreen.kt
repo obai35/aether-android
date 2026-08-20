@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aether.companion.R
+import com.aether.companion.data.api.NetworkModule
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 
 @Composable
@@ -39,8 +40,10 @@ fun SettingsScreen(
     viewModel: FreelancerViewModel = viewModel(),
     onNavigateBack: () -> Unit = {}
 ) {
-    var apiUrl by remember { mutableStateOf("https://your-aether-backend.com") }
-    var apiKey by remember { mutableStateOf("") }
+    // Load current settings from NetworkModule
+    val networkModule = NetworkModule.getInstance()
+    var apiUrl by remember { mutableStateOf(networkModule.getCurrentApiUrl()) }
+    var apiKey by remember { mutableStateOf(networkModule.getCurrentApiKey()) }
     var enableNotifications by remember { mutableStateOf(true) }
     var enableBiometric by remember { mutableStateOf(true) }
     var autoSync by remember { mutableStateOf(true) }
