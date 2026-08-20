@@ -5,7 +5,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.datastore.preferences.PreferencesDataStore
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +37,7 @@ object NetworkModule {
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    private var dataStore: PreferencesDataStore? = null
+    private var dataStore: androidx.datastore.DataStore<Preferences>? = null
     private var currentApiUrl = DEFAULT_API_URL
     private var currentApiKey = DEFAULT_API_KEY
 
