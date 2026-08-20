@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -203,10 +201,6 @@ fun StatCard(
                 tint = color,
                 modifier = Modifier.size(28.dp)
             )
-            Spacer(modifier = Modifier.padding(top = 8.dp))
-            Text(value, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = color)
-            Spacer(modifier = Modifier.padding(top = 4.dp))
-            Text(title, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.padding(top = 8.dp))
             Text(value, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = color)
             Spacer(modifier = Modifier.padding(top = 4.dp))

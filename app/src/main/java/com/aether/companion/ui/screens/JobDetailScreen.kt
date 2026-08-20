@@ -97,8 +97,8 @@ fun JobDetailScreen(
         return
     }
 
-    // Copy to local vals to avoid smart cast issues
-    val currentJob = job
+    // Copy to local vals to avoid smart cast issues - use !! since we checked job != null above
+    val currentJob: FreelancerJob = job!!
     val jobTitle = currentJob.title
     val jobPlatform = currentJob.platform
     val jobSkillScore = currentJob.skillScore
