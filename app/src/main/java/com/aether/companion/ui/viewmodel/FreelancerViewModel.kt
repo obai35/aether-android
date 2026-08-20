@@ -56,7 +56,7 @@ class FreelancerViewModel(
             _uiState.value = UIState.Loading
             try {
                 repository.refreshJobs()
-                _uiState.value = UIState.Success
+                _uiState.value = UIState.Success()
             } catch (e: Exception) {
                 _uiState.value = UIState.Error(e.message ?: "Failed to load jobs")
             }
@@ -83,12 +83,27 @@ class FreelancerViewModel(
 
     fun sendAssistantMessage(message: String) {
         viewModelScope.launch {
-            _assistantMessages.value = _assistantMessages.value + AIMessage(role = MessageRole.USER, content = message)
+            _assistantMessages.value = _assistantMessages.value + AIMessage(
+                id = UUID.randomUUID().toString(),
+                role = MessageRole.USER,
+                content = message,
+                timestamp = System.currentTimeMillis()
+            )
             try {
                 val response = repository.sendAssistantMessage(message)
-                _assistantMessages.value = _assistantMessages.value + AIMessage(role = MessageRole.ASSISTANT, content = response)
+                _assistantMessages.value = _assistantMessages.value + AIMessage(
+                    id = UUID.randomUUID().toString(),
+                    role = MessageRole.ASSISTANT,
+                    content = response,
+                    timestamp = System.currentTimeMillis()
+                )
             } catch (e: Exception) {
-                _assistantMessages.value = _assistantMessages.value + AIMessage(role = MessageRole.ASSISTANT, content = "Error: ${e.message}")
+                _assistantMessages.value = _assistantMessages.value + AIMessage(
+                    id = UUID.randomUUID().toString(),
+                    role = MessageRole.ASSISTANT,
+                    content = "Error: ${e.message}",
+                    timestamp = System.currentTimeMillis()
+                )
             }
         }
     }
