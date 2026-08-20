@@ -4,13 +4,10 @@ import android.content.Context
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.core.preferencesDataStore
-import androidx.datastore.preferences.core.getAnd
-import androidx.datastore.preferences.core.set
+import androidx.datastore.preferences.core.firstOrNull
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -68,7 +65,7 @@ class NetworkModule private constructor() {
     }
 
     private fun loadSettings() {
-        dataStore?.data?.firstOrNull()?.let { prefs ->
+        dataStore?.data?.firstOrNull()?.let { prefs: Preferences ->
             currentApiUrl = prefs[KEY_API_URL] ?: DEFAULT_API_URL
             currentApiKey = prefs[KEY_API_KEY] ?: DEFAULT_API_KEY
         }
@@ -78,7 +75,7 @@ class NetworkModule private constructor() {
         currentApiUrl = apiUrl
         currentApiKey = apiKey
 
-        dataStore?.edit { prefs ->
+        dataStore?.edit { prefs: MutablePreferences ->
             prefs[KEY_API_URL] = apiUrl
             prefs[KEY_API_KEY] = apiKey
         }
