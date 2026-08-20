@@ -1,7 +1,8 @@
 package com.aether.companion.data.api
 
 import android.content.Context
-import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.DataStore
+import androidx.datastore.preferences.Preferences
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -37,7 +38,7 @@ object NetworkModule {
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    private var dataStore: androidx.datastore.DataStore<Preferences>? = null
+    private var dataStore: DataStore<Preferences>? = null
     private var currentApiUrl = DEFAULT_API_URL
     private var currentApiKey = DEFAULT_API_KEY
 

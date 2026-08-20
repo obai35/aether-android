@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,8 +36,10 @@ import com.aether.companion.ui.screens.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     private val viewModel: FreelancerViewModel by viewModels {
-        val repository = FreelancerRepository(this, lifecycleScope)
-        FreelancerViewModel(repository)
+        ViewModelProvider.Factory { modelClass ->
+            val repository = FreelancerRepository(this@MainActivity, lifecycleScope)
+            FreelancerViewModel(repository)
+        }
     }
     private var isConnected = false
     private var shouldAutoConnect = true
