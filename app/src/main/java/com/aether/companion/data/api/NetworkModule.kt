@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.core.preferencesDataStore
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 private val KEY_API_URL = stringPreferencesKey("api_url")
 private val KEY_API_KEY = stringPreferencesKey("api_key")
 
-object NetworkModule {
+class NetworkModule private constructor() {
 
     private const val DEFAULT_API_URL = "https://your-aether-backend.com"
     private const val DEFAULT_API_KEY = ""
@@ -58,8 +58,10 @@ object NetworkModule {
         createApiService()
     }
 
-    fun getInstance(): NetworkModule = INSTANCE ?: synchronized(this) {
-        INSTANCE ?: NetworkModule().also { INSTANCE = it }
+    companion object {
+        fun getInstance(): NetworkModule = INSTANCE ?: synchronized(this) {
+            INSTANCE ?: NetworkModule().also { INSTANCE = it }
+        }
     }
 
     private fun loadSettings() {
