@@ -11,7 +11,7 @@ class AetherApplication : Application() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
         // Initialize NetworkModule early
-        getNetworkModule(this).initialize(this)
+        getNetworkModule().initialize(this)
         // Subscribe to general topics
         FirebaseMessaging.getInstance().subscribeToTopic("freelancer_updates")
         FirebaseMessaging.getInstance().subscribeToTopic("quality_gates")

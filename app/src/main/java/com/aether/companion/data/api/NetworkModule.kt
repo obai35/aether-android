@@ -8,6 +8,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -56,7 +57,7 @@ object NetworkModule {
     }
 
     private fun loadSettings() {
-        dataStore?.data?.firstOrNull()?.let { prefs: Preferences ->
+        dataStore?.data?.first()?.let { prefs: Preferences ->
             currentApiUrl = prefs[KEY_API_URL] ?: DEFAULT_API_URL
             currentApiKey = prefs[KEY_API_KEY] ?: DEFAULT_API_KEY
         }
@@ -94,7 +95,10 @@ object NetworkModule {
     }
 
     fun getApiService(): AetherApiService {
-        return apiService ?: createApiService().also { apiService = it }
+        if (apiService == null) {
+            createApiService()
+        }
+        return apiService!!
     }
 
     fun getCurrentApiUrl(): String = currentApiUrl
