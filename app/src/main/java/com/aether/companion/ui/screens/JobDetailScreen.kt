@@ -507,13 +507,13 @@ fun EventsTab(events: List<AutomationEvent>) {
 @Composable
 fun EventRow(event: AutomationEvent) {
     val (icon, color) = when (event.type) {
-        AutomationEvent.EventType.STAGE_CHANGED -> Icons.Default.History to MaterialTheme.colorScheme.primary
-        AutomationEvent.EventType.JOB_PROGRESS -> Icons.Default.PlayArrow to MaterialTheme.colorScheme.tertiary
-        AutomationEvent.EventType.HUMAN_REQUIRED -> Icons.Default.Warning to MaterialTheme.colorScheme.error
-        AutomationEvent.EventType.JOB_COMPLETED -> Icons.Default.CheckCircle to MaterialTheme.colorScheme.primary
-        AutomationEvent.EventType.JOB_FAILED -> Icons.Default.Error to MaterialTheme.colorScheme.error
-        AutomationEvent.EventType.QUALITY_GATE_STARTED,
-        AutomationEvent.EventType.QUALITY_GATE_COMPLETED -> Icons.Default.FactCheck to MaterialTheme.colorScheme.secondary
+        com.aether.companion.data.model.EventType.STAGE_CHANGED -> Icons.Default.History to MaterialTheme.colorScheme.primary
+        com.aether.companion.data.model.EventType.JOB_PROGRESS -> Icons.Default.PlayArrow to MaterialTheme.colorScheme.tertiary
+        com.aether.companion.data.model.EventType.HUMAN_REQUIRED -> Icons.Default.Warning to MaterialTheme.colorScheme.error
+        com.aether.companion.data.model.EventType.JOB_COMPLETED -> Icons.Default.CheckCircle to MaterialTheme.colorScheme.primary
+        com.aether.companion.data.model.EventType.JOB_FAILED -> Icons.Default.Error to MaterialTheme.colorScheme.error
+        com.aether.companion.data.model.EventType.QUALITY_GATE_STARTED,
+        com.aether.companion.data.model.EventType.QUALITY_GATE_COMPLETED -> Icons.Default.FactCheck to MaterialTheme.colorScheme.secondary
         else -> Icons.Default.Info to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
