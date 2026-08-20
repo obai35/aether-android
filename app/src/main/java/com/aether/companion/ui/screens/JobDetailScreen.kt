@@ -1,11 +1,13 @@
 package com.aether.companion.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -103,7 +105,7 @@ fun JobDetailScreen(
     val jobPlatform = currentJob.platform
     val jobSkillScore = currentJob.skillScore
     val jobLanguage = currentJob.language
-    val jobProgress = currentJob.progress
+    val jobProgress = currentJob.progress.toIntOrNull() ?: 0
     val jobStatus = currentJob.status
     val jobAttempts = currentJob.attempts
     val jobProposal = currentJob.proposal
@@ -506,11 +508,12 @@ fun EventsTab(events: List<AutomationEvent>) {
 fun EventRow(event: AutomationEvent) {
     val (icon, color) = when (event.type) {
         AutomationEvent.EventType.STAGE_CHANGED -> Icons.Default.History to MaterialTheme.colorScheme.primary
-        AutomationEvent.EventType.PROGRESS -> Icons.Default.PlayArrow to MaterialTheme.colorScheme.tertiary
+        AutomationEvent.EventType.JOB_PROGRESS -> Icons.Default.PlayArrow to MaterialTheme.colorScheme.tertiary
         AutomationEvent.EventType.HUMAN_REQUIRED -> Icons.Default.Warning to MaterialTheme.colorScheme.error
         AutomationEvent.EventType.JOB_COMPLETED -> Icons.Default.CheckCircle to MaterialTheme.colorScheme.primary
         AutomationEvent.EventType.JOB_FAILED -> Icons.Default.Error to MaterialTheme.colorScheme.error
-        AutomationEvent.EventType.QUALITY_GATE_RUN -> Icons.Default.FactCheck to MaterialTheme.colorScheme.secondary
+        AutomationEvent.EventType.QUALITY_GATE_STARTED,
+        AutomationEvent.EventType.QUALITY_GATE_COMPLETED -> Icons.Default.FactCheck to MaterialTheme.colorScheme.secondary
         else -> Icons.Default.Info to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
@@ -531,8 +534,31 @@ fun EventRow(event: AutomationEvent) {
                     Spacer(modifier = Modifier.padding(end = 12.dp))
                     Column {
                         Text(event.type.name, fontWeight = FontWeight.Medium)
-                        if (event.details.isNotEmpty()) {
-                            Text(event.details.first().value.toString(), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        val detailsText = when (event.data) {
+                            is AutomationEvent.EventData.ProgressData -> event.data.message
+                            is AutomationEvent.EventData.StageData -> event.data.stage
+                            is AutomationEvent.EventData.QualityGateData -> if (event.data.passed) "Passed" else "Failed"
+                            is AutomationEvent.EventData.HumanRequiredData -> event.data.reason
+                            is AutomationEvent.EventData.JobCompletedData -> event.data.summary ?: "Completed"
+                            is AutomationEvent.EventData.JobFailedData -> "Failed"
+                            is AutomationEvent.EventData.LogData -> event.data.message
+                            else -> ""
+                        }
+                        if (detailsText.isNotBlank()) {
+                            Text(detailsText, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                }
+                Text(
+                    java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
+                        .format(java.util.Date(event.timestamp)),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}ent.details.first().value.toString(), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
