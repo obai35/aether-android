@@ -2,15 +2,13 @@ package com.aether.companion.data.api
 
 import android.content.Context
 import androidx.datastore.preferences.core.MutablePreferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.first
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -64,7 +62,7 @@ object NetworkModule {
     }
 
     private fun loadSettings() {
-        dataStore?.data?.first()?.let { prefs ->
+        dataStore?.data?.firstOrNull()?.let { prefs ->
             currentApiUrl = prefs[KEY_API_URL] ?: DEFAULT_API_URL
             currentApiKey = prefs[KEY_API_KEY] ?: DEFAULT_API_KEY
         }
