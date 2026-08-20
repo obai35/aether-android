@@ -3,6 +3,7 @@ package com.aether.companion.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aether.companion.data.model.AutomationEvent
+import com.aether.companion.data.model.EventType
 import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.data.model.AIMessage
 import com.aether.companion.data.model.MessageRole
@@ -36,8 +37,8 @@ class FreelancerViewModel(
         events.filter { it.jobId == jobId }
     }
 
-    private val _uiState = MutableStateFlow<UIState>(UIState.Loading())
-    val uiState = _uiState.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), UIState.Loading())
+    private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
+    val uiState = _uiState.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), UIState.Loading)
 
     private val _assistantMessages = MutableStateFlow<List<AIMessage>>(emptyList())
     val assistantMessages = _assistantMessages.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -67,10 +68,10 @@ class FreelancerViewModel(
             automationEvents.collectLatest { events ->
                 events.lastOrNull()?.let { event ->
                     when (event.type) {
-                        AutomationEvent.EventType.HUMAN_REQUIRED -> {
+                        EventType.HUMAN_REQUIRED -> {
                             _pendingHumanAction.value = event
                         }
-                        AutomationEvent.EventType.JOB_COMPLETED, AutomationEvent.EventType.JOB_FAILED -> {
+                        EventType.JOB_COMPLETED, EventType.JOB_FAILED -> {
                             _pendingHumanAction.value = null
                         }
                         else -> {}
@@ -180,6 +181,6 @@ class FreelancerViewModel(
             val qualityGateResults: Map<String, QualityGateResult> = emptyMap()
         ) : UIState
         data class Error(val message: String) : UIState
-        object Loading : UIState()
+        object Loading : UIState
     }
 }
