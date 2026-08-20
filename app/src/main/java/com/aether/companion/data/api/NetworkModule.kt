@@ -1,15 +1,14 @@
 package com.aether.companion.data.api
 
 import android.content.Context
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.preferencesKey
+import androidx.datastore.preferences.PreferencesKeys
+import androidx.datastore.preferences.core.MutablePreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -40,7 +39,7 @@ object NetworkModule {
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    private var dataStore: androidx.datastore.preferences.PreferencesDataStore<Preferences>? = null
+    private var dataStore: androidx.datastore.preferences.PreferencesDataStore? = null
     private var currentApiUrl = DEFAULT_API_URL
     private var currentApiKey = DEFAULT_API_KEY
 
@@ -74,7 +73,7 @@ object NetworkModule {
         currentApiUrl = apiUrl
         currentApiKey = apiKey
 
-        dataStore?.edit { prefs ->
+        dataStore?.edit { prefs: MutablePreferences ->
             prefs[KEY_API_URL] = apiUrl
             prefs[KEY_API_KEY] = apiKey
         }
