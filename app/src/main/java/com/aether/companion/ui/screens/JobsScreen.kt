@@ -105,7 +105,7 @@ fun JobsScreen(
                     val filteredJobs = jobs.filter { currentFilterStatus == null || it.status == currentFilterStatus }
                     if (filteredJobs.isEmpty()) {
                         Text(
-                            "No jobs found${if (filterStatus != null) " for status ${filterStatus.name}" else ""}",
+                            "No jobs found${if (currentFilterStatus != null) " for status ${currentFilterStatus.name}" else ""}",
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxSize()
@@ -148,7 +148,7 @@ fun JobCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(job.title, fontWeight = FontWeight.Bold, maxLines = 1, overflow = androidx.compose.ui.text.TextOverflow.Ellipsis)
+                Text(job.title, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 JobStatusChip(status = job.status)
             }
             androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 8.dp))
