@@ -1,13 +1,14 @@
 package com.aether.companion.data.api
 
 import android.content.Context
-import androidx.datastore.preferences.core.MutablePreferences
-import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.MutablePreferences
+import androidx.datastore.preferences.PreferencesDataStore
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.core.firstOrNull
+import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -23,10 +24,7 @@ private val KEY_API_KEY = stringPreferencesKey("api_key")
 private const val DEFAULT_API_URL = "https://your-aether-backend.com"
 private const val DEFAULT_API_KEY = ""
 
-class NetworkModule private constructor() {
-
-    @Volatile
-    private var INSTANCE: NetworkModule? = null
+object NetworkModule {
 
     private val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
@@ -39,7 +37,7 @@ class NetworkModule private constructor() {
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    private var dataStore: androidx.datastore.preferences.PreferencesDataStore? = null
+    private var dataStore: PreferencesDataStore? = null
     private var currentApiUrl = DEFAULT_API_URL
     private var currentApiKey = DEFAULT_API_KEY
 
@@ -58,14 +56,8 @@ class NetworkModule private constructor() {
         createApiService()
     }
 
-    companion object {
-        fun getInstance(): NetworkModule = INSTANCE ?: synchronized(this) {
-            INSTANCE ?: NetworkModule().also { INSTANCE = it }
-        }
-    }
-
     private fun loadSettings() {
-        dataStore?.data?.firstOrNull()?.let { prefs: Preferences ->
+        dataStore?.data?.first()?.let { prefs ->
             currentApiUrl = prefs[KEY_API_URL] ?: DEFAULT_API_URL
             currentApiKey = prefs[KEY_API_KEY] ?: DEFAULT_API_KEY
         }
@@ -112,12 +104,10 @@ class NetworkModule private constructor() {
     // For testing/debugging
     fun reset() {
         apiService = null
-        INSTANCE = null
     }
 }
 
 // Extension for easy access
 fun Context.getNetworkModule(): NetworkModule {
-    val module = NetworkModule.getInstance()
-    return module
+    return NetworkModule
 }
