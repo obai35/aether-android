@@ -26,6 +26,8 @@ private val KEY_API_KEY = stringPreferencesKey("api_key")
 private const val DEFAULT_API_URL = "https://your-aether-backend.com"
 private const val DEFAULT_API_KEY = ""
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "aether_settings")
+
 object NetworkModule {
 
     private val moshi = Moshi.Builder()
@@ -39,27 +41,23 @@ object NetworkModule {
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    private var dataStore: DataStore<Preferences>? = null
     private var currentApiUrl = DEFAULT_API_URL
     private var currentApiKey = DEFAULT_API_KEY
 
     private var apiService: AetherApiService? = null
 
     fun initialize(context: Context) {
-        // Build DataStore
-        dataStore = context.preferencesDataStore(name = "aether_settings")
-
         // Load saved settings synchronously on init
         runBlocking(Dispatchers.IO) {
-            loadSettings()
+            loadSettings(context)
         }
 
         // Create initial API service
         createApiService()
     }
 
-    private suspend fun loadSettings() {
-        dataStore?.data?.first()?.let { prefs: Preferences ->
+    private suspend fun loadSettings(context: Context) {
+        context.dataStore.data.first().let { prefs: Preferences ->
             currentApiUrl = prefs[KEY_API_URL] ?: DEFAULT_API_URL
             currentApiKey = prefs[KEY_API_KEY] ?: DEFAULT_API_KEY
         }
@@ -69,13 +67,21 @@ object NetworkModule {
         currentApiUrl = apiUrl
         currentApiKey = apiKey
 
-        dataStore?.edit { prefs: MutablePreferences ->
+        // Need a context to access dataStore - use application context
+        // We'll store a reference to context at initialize time
+        dataStoreRef?.edit { prefs: MutablePreferences ->
             prefs[KEY_API_URL] = apiUrl
             prefs[KEY_API_KEY] = apiKey
         }
 
         // Recreate API service with new URL
         createApiService()
+    }
+
+    private var dataStoreRef: DataStore<Preferences>? = null
+
+    fun setDataStore(dataStore: DataStore<Preferences>) {
+        dataStoreRef = dataStore
     }
 
     private fun createApiService() {
