@@ -43,7 +43,7 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit = {}
 ) {
     // Load current settings from NetworkModule
-    val networkModule = getNetworkModule(LocalContext.current)
+    val networkModule = LocalContext.current.getNetworkModule()
     var apiUrl by remember { mutableStateOf(networkModule.getCurrentApiUrl()) }
     var apiKey by remember { mutableStateOf(networkModule.getCurrentApiKey()) }
     var enableNotifications by remember { mutableStateOf(true) }
