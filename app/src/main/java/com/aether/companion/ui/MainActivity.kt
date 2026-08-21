@@ -21,8 +21,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.aether.companion.R
 import com.aether.companion.data.api.NetworkModule
 import com.aether.companion.data.model.AutomationEvent
