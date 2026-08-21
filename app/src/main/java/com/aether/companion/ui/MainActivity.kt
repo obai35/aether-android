@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,8 +38,10 @@ import com.aether.companion.ui.screens.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     private val viewModel: FreelancerViewModel by viewModels {
-        val repository = FreelancerRepository(this@MainActivity, lifecycleScope)
-        FreelancerViewModel(repository)
+        ViewModelProvider.Factory { modelClass ->
+            val repository = FreelancerRepository(this@MainActivity, lifecycleScope)
+            FreelancerViewModel(repository)
+        }
     }
     private var isConnected = false
     private var shouldAutoConnect = true
