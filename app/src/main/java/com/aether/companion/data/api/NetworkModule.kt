@@ -23,7 +23,7 @@ private val KEY_API_URL = stringPreferencesKey("api_url")
 private val KEY_API_KEY = stringPreferencesKey("api_key")
 
 // Constants at top level
-private const val DEFAULT_API_URL = "https://your-aether-backend.com"
+private const val DEFAULT_API_URL = "https://aether-backend.onrender.com"
 private const val DEFAULT_API_KEY = ""
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "aether_settings")
