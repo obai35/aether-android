@@ -37,10 +37,17 @@ import com.aether.companion.ui.screens.AssistantScreen
 import com.aether.companion.ui.screens.SettingsScreen
 
 class MainActivity : ComponentActivity() {
-    private val viewModel: FreelancerViewModel by viewModels {
-        val repository = FreelancerRepository(this@MainActivity, lifecycleScope)
-        FreelancerViewModel(repository)
-    }
+    private val viewModel: FreelancerViewModel by viewModels(
+        factoryProducer = {
+            val repository = FreelancerRepository(this@MainActivity, lifecycleScope)
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : androidx.lifecycle.ViewModel?> create(modelClass: Class<T>): T {
+                    return FreelancerViewModel(repository) as T
+                }
+            }
+        }
+    )
     private var isConnected = false
     private var shouldAutoConnect = true
 
