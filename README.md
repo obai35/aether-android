@@ -168,8 +168,8 @@ NavController navigates to JobDetailScreen(job_id)
 
 1. **Update API Base URL** in `NetworkModule.kt`:
 ```kotlin
-val baseUrl = "https://your-aether-backend.com/"
-val wsUrl = "wss://your-aether-backend.com"
+val baseUrl = "https://aether-backend.onrender.com/"
+val wsUrl = "wss://aether-backend.onrender.com"
 ```
 
 2. **Firebase Configuration**:
