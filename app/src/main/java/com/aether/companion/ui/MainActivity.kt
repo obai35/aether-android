@@ -9,24 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.aether.companion.R
-import com.aether.companion.data.api.NetworkModule
-import com.aether.companion.data.model.AutomationEvent
-import com.aether.companion.data.model.FreelancerJob
 import com.aether.companion.data.repository.FreelancerRepository
 import com.aether.companion.ui.viewmodel.FreelancerViewModel
 import com.aether.companion.ui.screens.DashboardScreen
@@ -42,14 +34,12 @@ class MainActivity : ComponentActivity() {
             val repository = FreelancerRepository(this@MainActivity, lifecycleScope)
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
-                override fun <T : androidx.lifecycle.ViewModel?> create(modelClass: Class<T>): T {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return FreelancerViewModel(repository) as T
                 }
             }
         }
     )
-    private var isConnected = false
-    private var shouldAutoConnect = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -70,23 +60,27 @@ class MainActivity : ComponentActivity() {
     fun AppNavHost(viewModel: FreelancerViewModel) {
         val navController = rememberNavController()
         val backStackEntry by currentBackStackEntryAsState()
-        val currentRoute = backStackEntry?.destination?.route
 
         NavHost(navController, startDestination = "dashboard") {
             composable("dashboard") {
                 DashboardScreen(
                     viewModel = viewModel,
-                    onNavigateToJob = { job -> navController.navigate("job/$job") },
+                    onNavigateToJobs = { navController.navigate("jobs") },
                     onNavigateToAutomation = { navController.navigate("automation") },
-                    onNavigateToAssistant = { navController.navigate("assistant") },
-                    onNavigateToSettings = { navController.navigate("settings") }
+                    onNavigateToAssistant = { navController.navigate("assistant") }
+                )
+            }
+            composable("jobs") {
+                JobsScreen(
+                    viewModel = viewModel,
+                    onNavigateToJob = { jobId -> navController.navigate("job/$jobId") }
                 )
             }
             composable(
                 route = "job/{jobId}",
                 arguments = listOf(navArgument("jobId") { type = NavType.StringType })
             ) { backStackEntry ->
-                val jobId = backStackEntry.getString() ?: ""
+                val jobId = backStackEntry.arguments?.getString("jobId") ?: ""
                 JobDetailScreen(
                     viewModel = viewModel,
                     jobId = jobId,
