@@ -16,10 +16,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.aether.companion.R
 import com.aether.companion.data.api.NetworkModule
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun AppNavHost(viewModel: FreelancerViewModel) {
         val navController = rememberNavController()
-        val backStackEntry by navController.currentBackStackEntryAsState()
+        val backStackEntry by currentBackStackEntryAsState()
         val currentRoute = backStackEntry?.destination?.route
 
         NavHost(navController, startDestination = "dashboard") {
