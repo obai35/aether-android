@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun AppNavHost(viewModel: FreelancerViewModel) {
         val navController = rememberNavController()
-        val backStackEntry by navController.currentBackStackEntryAsState()
+        val backStackEntry = navController.currentBackStackEntry
 
         NavHost(navController, startDestination = "dashboard") {
             composable("dashboard") {
