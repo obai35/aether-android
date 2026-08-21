@@ -38,10 +38,8 @@ import com.aether.companion.ui.screens.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     private val viewModel: FreelancerViewModel by viewModels {
-        ViewModelProvider.Factory { modelClass ->
-            val repository = FreelancerRepository(this@MainActivity, lifecycleScope)
-            FreelancerViewModel(repository)
-        }
+        val repository = FreelancerRepository(this@MainActivity, lifecycleScope)
+        FreelancerViewModel(repository)
     }
     private var isConnected = false
     private var shouldAutoConnect = true
